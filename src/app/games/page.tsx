@@ -100,14 +100,9 @@ export default function GamesPage() {
     if (age >= 12 && age <= 17) {
       return (
         <GameSection title="Games for ages 12-17">
-          <GameCard
-            title="Flappy Bird"
-            description="The classic tap-to-fly game. How far can you go?"
-            href="/games/flappy-bird"
-            icon={<Bird className="w-8 h-8 text-primary" />}
-          />
           <GameCardPlaceholder gameTitle="Creative Canvas" />
           <GameCardPlaceholder gameTitle="Focus Flow" />
+          <GameCardPlaceholder gameTitle="Rhythm Arena" />
         </GameSection>
       );
     } else if (age >= 18 && age <= 25) {
