@@ -1,18 +1,56 @@
 'use client';
-import { Gamepad2, ArrowLeft } from 'lucide-react';
+import { Gamepad2, ArrowLeft, Play } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useState, type FormEvent } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
-const GameSection = ({ title, children }: { title: string; children: React.ReactNode }) => (
+const GameSection = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) => (
   <div className="w-full max-w-4xl mx-auto">
     <h2 className="text-3xl font-bold mb-6 text-center">{title}</h2>
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {children}
     </div>
   </div>
+);
+
+const GameCard = ({
+  title,
+  description,
+  href,
+}: {
+  title: string;
+  description: string;
+  href: string;
+}) => (
+  <Card className="bg-card/80 flex flex-col">
+    <CardHeader>
+      <CardTitle>{title}</CardTitle>
+      <CardDescription>{description}</CardDescription>
+    </CardHeader>
+    <CardContent className="flex-1" />
+    <CardFooter>
+      <Button asChild className="w-full">
+        <Link href={href}>
+          <Play className="mr-2 h-4 w-4" /> Play
+        </Link>
+      </Button>
+    </CardFooter>
+  </Card>
 );
 
 const GameCardPlaceholder = ({ gameTitle }: { gameTitle: string }) => (
@@ -50,7 +88,11 @@ export default function GamesPage() {
     if (age >= 12 && age <= 17) {
       return (
         <GameSection title="Games for ages 12-17">
-          <GameCardPlaceholder gameTitle="Mindful Maze" />
+          <GameCard
+            title="Mindful Maze"
+            description="A soothing game to find your way to the center and collect positive affirmations."
+            href="/games/mindful-maze"
+          />
           <GameCardPlaceholder gameTitle="Focus Flow" />
           <GameCardPlaceholder gameTitle="Creative Canvas" />
         </GameSection>
@@ -103,7 +145,9 @@ export default function GamesPage() {
           </h1>
         </div>
         {age && (
-          <Button variant="outline" onClick={resetAge}>Change Age</Button>
+          <Button variant="outline" onClick={resetAge}>
+            Change Age
+          </Button>
         )}
       </header>
       <main className="flex-1 flex items-center justify-center p-6">
@@ -111,7 +155,9 @@ export default function GamesPage() {
           <div className="w-full max-w-sm">
             <Card className="text-center">
               <CardHeader>
-                <CardTitle className="text-2xl font-headline">What's your age?</CardTitle>
+                <CardTitle className="text-2xl font-headline">
+                  What's your age?
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
