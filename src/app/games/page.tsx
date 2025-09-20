@@ -88,11 +88,7 @@ export default function GamesPage() {
     if (age >= 12 && age <= 17) {
       return (
         <GameSection title="Games for ages 12-17">
-          <GameCard
-            title="Mindful Maze"
-            description="A soothing game to find your way to the center and collect positive affirmations."
-            href="/games/mindful-maze"
-          />
+          <GameCardPlaceholder gameTitle="Mindful Maze" />
           <GameCardPlaceholder gameTitle="Focus Flow" />
           <GameCardPlaceholder gameTitle="Creative Canvas" />
         </GameSection>
