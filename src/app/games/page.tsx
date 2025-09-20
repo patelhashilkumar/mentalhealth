@@ -1,5 +1,11 @@
 'use client';
-import { Gamepad2, ArrowLeft, Play, ShieldCheck } from 'lucide-react';
+import {
+  Gamepad2,
+  ArrowLeft,
+  Play,
+  ShieldCheck,
+  HeartPulse,
+} from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -34,7 +40,7 @@ const GameCard = ({
   href,
   icon,
 }: {
-  title:string;
+  title: string;
   description: string;
   href: string;
   icon?: React.ReactNode;
@@ -93,7 +99,6 @@ export default function GamesPage() {
     if (age >= 12 && age <= 17) {
       return (
         <GameSection title="Games for ages 12-17">
-          <GameCardPlaceholder gameTitle="Mindful Maze" />
           <GameCardPlaceholder gameTitle="Focus Flow" />
           <GameCardPlaceholder gameTitle="Creative Canvas" />
         </GameSection>
@@ -107,7 +112,12 @@ export default function GamesPage() {
             href="/games/mindquest"
             icon={<ShieldCheck className="w-8 h-8 text-primary" />}
           />
-          <GameCardPlaceholder gameTitle="Strategy Scape" />
+          <GameCard
+            title="PulseRunner"
+            description="Endless runner where your tap rhythm controls the speed."
+            href="/games/pulserunner"
+            icon={<HeartPulse className="w-8 h-8 text-primary" />}
+          />
           <GameCardPlaceholder gameTitle="Zenith Zone" />
         </GameSection>
       );
