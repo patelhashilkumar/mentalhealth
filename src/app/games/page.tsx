@@ -41,7 +41,7 @@ const GameCard = ({
   href,
   icon,
 }: {
-  title: string;
+  title:string;
   description: string;
   href: string;
   icon?: React.ReactNode;
@@ -65,10 +65,17 @@ const GameCard = ({
   </Card>
 );
 
-const GameCardPlaceholder = ({ gameTitle }: { gameTitle: string }) => (
+const GameCardPlaceholder = ({
+  gameTitle,
+  description,
+}: {
+  gameTitle: string;
+  description?: string;
+}) => (
   <Card className="bg-card/80">
     <CardHeader>
       <CardTitle>{gameTitle}</CardTitle>
+      {description && <CardDescription>{description}</CardDescription>}
     </CardHeader>
     <CardContent>
       <p className="text-muted-foreground">Coming Soon!</p>
@@ -100,9 +107,18 @@ export default function GamesPage() {
     if (age >= 12 && age <= 17) {
       return (
         <GameSection title="Games for ages 12-17">
-          <GameCardPlaceholder gameTitle="Creative Canvas" />
-          <GameCardPlaceholder gameTitle="Focus Flow" />
-          <GameCardPlaceholder gameTitle="Rhythm Arena" />
+          <GameCardPlaceholder
+            gameTitle="Mindful Maze"
+            description="A calming puzzle game where you collect positive thoughts."
+          />
+          <GameCardPlaceholder
+            gameTitle="Echo Grove"
+            description="A creative space to turn your feelings into a beautiful, growing forest."
+          />
+          <GameCardPlaceholder
+            gameTitle="Starlight Journey"
+            description="An adventure where you restore light to the stars by overcoming challenges."
+          />
         </GameSection>
       );
     } else if (age >= 18 && age <= 25) {
