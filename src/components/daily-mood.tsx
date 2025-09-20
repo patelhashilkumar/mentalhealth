@@ -3,11 +3,11 @@ import { type Mood } from '@/context/mood-context';
 
 const moodColors: { [key: string]: string } = {
   'Very Unpleasant': '#ff6b6b',
-  'Unpleasant': '#ff8e72',
+  Unpleasant: '#ff8e72',
   'Slightly Unpleasant': '#ffb37c',
-  'Neutral': '#a9b7c1',
+  Neutral: '#a9b7c1',
   'Slightly Pleasant': '#87d0a2',
-  'Pleasant': '#62dca5',
+  Pleasant: '#62dca5',
   'Very Pleasant': '#2ce69b',
 };
 
@@ -29,15 +29,22 @@ const DailyMood = ({ mood }: { mood: Mood | null }) => {
       <div className="absolute inset-4 border border-white/20 rounded-full" />
       {/* Inner Ring */}
       <div className="absolute inset-8 border border-white/30 rounded-full" />
-      {/* Inner Orb */}
-      <div
-        className="absolute w-20 h-20 rounded-full"
-        style={{
-          background: `radial-gradient(circle, ${color} 0%, ${color}aa 70%)`,
-        }}
-      />
-      {/* Center Dot */}
-      <div className="absolute w-2 h-2 rounded-full bg-black/50" />
+
+      {mood ? (
+        <div className="relative text-6xl">{mood.emoji}</div>
+      ) : (
+        <>
+          {/* Inner Orb for when no mood is logged */}
+          <div
+            className="absolute w-20 h-20 rounded-full"
+            style={{
+              background: `radial-gradient(circle, ${color} 0%, ${color}aa 70%)`,
+            }}
+          />
+          {/* Center Dot for when no mood is logged */}
+          <div className="absolute w-2 h-2 rounded-full bg-black/50" />
+        </>
+      )}
     </div>
   );
 };
