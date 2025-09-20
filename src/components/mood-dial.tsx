@@ -56,7 +56,7 @@ const MoodDial = () => {
     <div className="flex flex-col items-center gap-8">
       <div
         ref={dialRef}
-        className="relative w-[360px] h-[360px] rounded-full flex items-center justify-center cursor-pointer"
+        className="relative w-[360px] h-[360px] rounded-full flex items-center justify-center cursor-pointer bg-background/20 backdrop-blur-xl border border-white/10"
         {...bind()}
         style={{ touchAction: 'none' }}
       >

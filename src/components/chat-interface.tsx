@@ -127,7 +127,7 @@ export default function ChatInterface() {
                   'p-4 rounded-2xl text-foreground w-full shadow-md',
                   message.role === 'user'
                     ? 'bg-primary/20 rounded-br-none max-w-md'
-                    : 'bg-background/60 backdrop-blur-sm border border-white/30 rounded-bl-none max-w-4xl',
+                    : 'bg-background/60 backdrop-blur-sm border border-white/10 rounded-bl-none max-w-4xl',
                   message.role === 'loading' && 'p-4 max-w-md'
                 )}
               >
@@ -185,7 +185,7 @@ export default function ChatInterface() {
         </div>
       </ScrollArea>
       <div className="p-4 bg-transparent">
-        <div className="p-2 rounded-2xl bg-background/60 backdrop-blur-sm border border-white/30 shadow-lg">
+        <div className="p-2 rounded-2xl bg-background/60 backdrop-blur-xl border border-white/10 shadow-lg">
           <form onSubmit={handleSubmit} className="flex items-end gap-2">
             <Textarea
               ref={textareaRef}
