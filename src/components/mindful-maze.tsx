@@ -71,9 +71,15 @@ const MindfulMaze: React.FC = () => {
   const [playerPos, setPlayerPos] = useState({ x: 0, y: 0 });
   const [isFinished, setIsFinished] = useState(false);
 
-  useEffect(() => {
+  const restartGame = useCallback(() => {
     setMaze(generateMaze(MAZE_WIDTH, MAZE_HEIGHT));
+    setPlayerPos({ x: 0, y: 0 });
+    setIsFinished(false);
   }, []);
+
+  useEffect(() => {
+    restartGame();
+  }, [restartGame]);
 
   const movePlayer = useCallback(
     (dx: number, dy: number) => {
@@ -97,14 +103,9 @@ const MindfulMaze: React.FC = () => {
     [playerPos, maze, isFinished]
   );
 
-  const restartGame = () => {
-    setMaze(generateMaze(MAZE_WIDTH, MAZE_HEIGHT));
-    setPlayerPos({ x: 0, y: 0 });
-    setIsFinished(false);
-  };
-
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      e.preventDefault();
       switch (e.key) {
         case 'ArrowUp':
           movePlayer(0, -1);
@@ -120,7 +121,9 @@ const MindfulMaze: React.FC = () => {
           break;
         case 'r':
         case 'R':
-          restartGame();
+          if (isFinished) {
+            restartGame();
+          }
           break;
       }
     };
@@ -129,7 +132,7 @@ const MindfulMaze: React.FC = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [movePlayer, restartGame]);
+  }, [movePlayer, restartGame, isFinished]);
 
   if (!maze) {
     return <div>Loading Maze...</div>;
@@ -173,46 +176,31 @@ const MindfulMaze: React.FC = () => {
       {isFinished && (
         <div className="text-center p-4 rounded-lg bg-primary/20 text-primary-foreground animate-in fade-in">
           <p className="font-bold text-lg">You found the exit!</p>
-          <p>Take a deep breath. You navigated the path.</p>
+          <p className="mb-4">Take a deep breath. You navigated the path.</p>
+          <Button onClick={restartGame} variant="outline">
+            <RefreshCw className="mr-2" /> New Maze
+          </Button>
         </div>
       )}
 
-      <div className="flex flex-col items-center gap-2">
-        <Button
-          size="icon"
-          onClick={() => movePlayer(0, -1)}
-          disabled={isFinished}
-        >
-          <ArrowUp />
-        </Button>
-        <div className="flex gap-2">
-          <Button
-            size="icon"
-            onClick={() => movePlayer(-1, 0)}
-            disabled={isFinished}
-          >
-            <ArrowLeft />
+      {!isFinished && (
+        <div className="flex flex-col items-center gap-2">
+          <Button size="icon" onClick={() => movePlayer(0, -1)}>
+            <ArrowUp />
           </Button>
-          <Button
-            size="icon"
-            onClick={() => movePlayer(0, 1)}
-            disabled={isFinished}
-          >
-            <ArrowDown />
-          </Button>
-          <Button
-            size="icon"
-            onClick={() => movePlayer(1, 0)}
-            disabled={isFinished}
-          >
-            <ArrowRight />
-          </Button>
+          <div className="flex gap-2">
+            <Button size="icon" onClick={() => movePlayer(-1, 0)}>
+              <ArrowLeft />
+            </Button>
+            <Button size="icon" onClick={() => movePlayer(0, 1)}>
+              <ArrowDown />
+            </Button>
+            <Button size="icon" onClick={() => movePlayer(1, 0)}>
+              <ArrowRight />
+            </Button>
+          </div>
         </div>
-      </div>
-
-      <Button onClick={restartGame} variant="outline">
-        <RefreshCw className="mr-2" /> New Maze
-      </Button>
+      )}
     </div>
   );
 };
