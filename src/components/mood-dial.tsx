@@ -3,6 +3,7 @@ import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { useDrag } from '@use-gesture/react';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 const moods = [
   { name: 'Very Pleasant', color: 'hsl(120, 100%, 75%)', value: 5 },
@@ -21,6 +22,7 @@ const LABEL_RADIUS = DIAL_RADIUS + 40;
 const MoodDial = () => {
   const dialRef = useRef<HTMLDivElement>(null);
   const [angle, setAngle] = useState(-Math.PI / 2); // Start at the top (Neutral)
+  const { toast } = useToast();
 
   useEffect(() => {
     // Set initial angle for Neutral mood on mount
@@ -31,23 +33,31 @@ const MoodDial = () => {
   }, []);
 
   const selectedMood = useMemo(() => {
-    // Normalize angle to be between 0 and 2*PI
     const normalizedAngle = (angle + Math.PI / 2 + Math.PI * 4) % (Math.PI * 2);
     const step = (Math.PI * 2) / moods.length;
-    // Find the closest mood index
     const moodIndex = Math.round(normalizedAngle / step);
     return moods[moodIndex % moods.length];
   }, [angle]);
 
   const bind = useDrag(({ xy, down }) => {
     if (dialRef.current) {
-      const { left, top, width, height } = dialRef.current.getBoundingClientRect();
+      const { left, top, width, height } =
+        dialRef.current.getBoundingClientRect();
       const centerX = left + width / 2;
       const centerY = top + height / 2;
       const newAngle = Math.atan2(xy[1] - centerY, xy[0] - centerX);
       setAngle(newAngle);
     }
   });
+
+  const handleLogMood = () => {
+    if (selectedMood) {
+      toast({
+        title: 'Mood Logged',
+        description: `You're feeling: ${selectedMood.name}`,
+      });
+    }
+  };
 
   const handleX = DIAL_RADIUS * Math.cos(angle);
   const handleY = DIAL_RADIUS * Math.sin(angle);
@@ -71,10 +81,10 @@ const MoodDial = () => {
             }}
           />
         )}
-        
+
         {/* The Dial Track */}
         <div className="absolute w-[280px] h-[280px] border-4 border-primary/20 rounded-full" />
-        
+
         {/* Mood Labels */}
         {moods.map((mood, index) => {
           const moodAngle = -Math.PI / 2 + (index / moods.length) * Math.PI * 2;
@@ -83,7 +93,7 @@ const MoodDial = () => {
           const isSelected = selectedMood?.name === mood.name;
 
           return (
-             <div
+            <div
               key={mood.name}
               className="absolute w-24 h-10 flex items-center justify-center"
               style={{
@@ -105,7 +115,7 @@ const MoodDial = () => {
             </div>
           );
         })}
-        
+
         {/* Draggable Handle */}
         <div
           className="absolute rounded-full bg-primary border-4 border-background shadow-lg"
@@ -122,15 +132,18 @@ const MoodDial = () => {
       <div className="h-20 flex flex-col items-center justify-center">
         {selectedMood && (
           <div className="text-center">
-            <p className="text-2xl font-bold" style={{ color: selectedMood.color }}>
+            <p
+              className="text-2xl font-bold"
+              style={{ color: selectedMood.color }}
+            >
               {selectedMood.name}
             </p>
             <p className="text-muted-foreground">You have selected a mood</p>
           </div>
         )}
       </div>
-      
-      <Button disabled={!selectedMood} size="lg">
+
+      <Button disabled={!selectedMood} size="lg" onClick={handleLogMood}>
         Log Mood
       </Button>
     </div>
