@@ -80,14 +80,14 @@ const MoodDial = () => {
               style={{ transform: `rotate(${(moodAngle * 180) / Math.PI}deg)` }}
             >
               <div
-                className="absolute left-1/2 -translate-x-1/2 w-24 h-10 flex items-center justify-center origin-left"
+                className="absolute left-1/2 -translate-x-1/2 w-24 h-10 flex items-center justify-center"
                 style={{
-                  transform: 'translateX(8.5rem) rotate(90deg)',
+                  transform: `translateX(8.5rem) rotate(-${(moodAngle * 180) / Math.PI}deg)`,
                 }}
               >
                 <span
                   className={cn(
-                    'text-sm transition-all duration-300',
+                    'text-sm transition-all duration-300 text-center',
                     isSelected
                       ? 'font-bold text-foreground scale-110'
                       : 'text-muted-foreground'
