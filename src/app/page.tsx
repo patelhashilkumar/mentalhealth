@@ -1,21 +1,81 @@
 'use client';
-import { Stethoscope } from 'lucide-react';
-import ChatInterface from '@/components/chat-interface';
 
-export default function Home() {
+import { Stethoscope, BookHeart, Smile, Newspaper } from 'lucide-react';
+import Link from 'next/link';
+
+export default function Dashboard() {
   return (
     <div className="flex flex-col h-screen bg-background/80 backdrop-blur-xl">
       <header className="flex items-center justify-between p-4 border-b border-white/10 shadow-sm">
         <div className="flex items-center">
-          <Stethoscope className="w-8 h-8 mr-3 text-primary" />
+          <BookHeart className="w-8 h-8 mr-3 text-primary" />
           <h1 className="text-2xl font-bold tracking-tight text-foreground font-headline">
-            AI Doc
+            State of Mind
           </h1>
         </div>
       </header>
-      <main className="flex-1 overflow-hidden">
-        <ChatInterface />
+      <main className="flex-1 p-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <FeatureCard
+            title="AI Doc"
+            description="Your personal AI health assistant."
+            href="/ai-doc"
+            icon={<Stethoscope className="w-8 h-8 text-primary" />}
+          />
+          <FeatureCard
+            title="Mood Meter"
+            description="Log and track your daily mood."
+            href="#"
+            icon={<Smile className="w-8 h-8 text-primary" />}
+            disabled
+          />
+          <FeatureCard
+            title="Feed"
+            description="Discover content and connect with others."
+            href="#"
+            icon={<Newspaper className="w-8 h-8 text-primary" />}
+            disabled
+          />
+        </div>
       </main>
     </div>
+  );
+}
+
+function FeatureCard({
+  title,
+  description,
+  href,
+  icon,
+  disabled = false,
+}: {
+  title: string;
+  description: string;
+  href: string;
+  icon: React.ReactNode;
+  disabled?: boolean;
+}) {
+  const content = (
+    <div
+      className={`flex flex-col items-center justify-center p-6 text-center transition-all duration-300 bg-card/60 backdrop-blur-sm border border-border/50 rounded-2xl ${
+        disabled
+          ? 'opacity-50 cursor-not-allowed'
+          : 'hover:bg-primary/20 hover:scale-105'
+      }`}
+    >
+      <div className="p-4 mb-4 bg-primary/10 rounded-full">{icon}</div>
+      <h2 className="text-xl font-bold text-foreground">{title}</h2>
+      <p className="text-sm text-muted-foreground">{description}</p>
+    </div>
+  );
+
+  if (disabled) {
+    return content;
+  }
+
+  return (
+    <Link href={href}>
+      {content}
+    </Link>
   );
 }
