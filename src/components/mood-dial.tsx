@@ -85,7 +85,7 @@ const MoodDial = () => {
       </div>
       
       <Button disabled={!selectedMood} size="lg">
-        Next
+        Log Mood
       </Button>
     </div>
   );
