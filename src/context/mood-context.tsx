@@ -11,8 +11,6 @@ import React, {
 type Mood = {
   name: string;
   emoji: string;
-  color: string;
-  value: number;
 };
 
 type MoodContextType = {

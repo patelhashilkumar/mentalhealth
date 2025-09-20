@@ -1,71 +1,67 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Calendar, Layers, Share2, Heart } from 'lucide-react';
+import { Stethoscope, Newspaper, Gamepad2 } from 'lucide-react';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import DailyMood from '@/components/daily-mood';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
+const features = [
+  {
+    title: 'AI Doc',
+    description: 'Get AI-powered medical advice.',
+    icon: Stethoscope,
+    href: '/ai-doc',
+  },
+  {
+    title: 'Feed',
+    description: 'Discover content about mental health.',
+    icon: Newspaper,
+    href: '/feed',
+  },
+  {
+    title: 'Games',
+    description: 'Relax with some fun games.',
+    icon: Gamepad2,
+    href: '/games',
+  },
+];
+
 export default function Dashboard() {
-  const [date, setDate] = useState('');
-
-  useEffect(() => {
-    const today = new Date();
-    const options: Intl.DateTimeFormatOptions = {
-      day: 'numeric',
-      month: 'short',
-    };
-    setDate(today.toLocaleDateString('en-US', options));
-  }, []);
-
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-10 flex items-center justify-between p-4 bg-background/80 backdrop-blur-sm">
-        <h1 className="text-xl font-bold">State of Mind</h1>
-        <Button variant="ghost" size="icon">
-          <Calendar className="w-5 h-5" />
-        </Button>
-      </header>
-      <main className="flex-1 p-4">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold">Today, {date}</h2>
-          <Button asChild>
-            <Link href="/mood-meter">Log</Link>
-          </Button>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-background text-foreground">
+      <main className="container flex flex-col items-center justify-center flex-1 p-4">
+        <div className="mb-12 text-center">
+          <h1 className="text-5xl font-bold tracking-tighter font-headline">
+            AI Health Assistant
+          </h1>
+          <p className="mt-4 text-lg text-muted-foreground">
+            Your all-in-one companion for better well-being.
+          </p>
         </div>
 
-        <div className="space-y-6">
-          <DailyMood />
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-4xl w-full">
+          {features.map((feature) => (
+            <Link key={feature.title} href={feature.href} passHref>
+              <Card className="flex flex-col h-full transition-all duration-300 transform hover:scale-105 hover:shadow-primary/20 bg-card/50 backdrop-blur-xl">
+                <CardHeader className="flex-row items-center gap-4">
+                  <feature.icon className="w-8 h-8 text-primary" />
+                  <CardTitle className="text-xl font-bold font-headline">
+                    {feature.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="flex-1">
+                  <p className="text-muted-foreground">{feature.description}</p>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                MOMENTARY EMOTIONS
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-center text-muted-foreground">No Entries</p>
-              <Button variant="link" className="w-full mt-2 text-primary">
-                Show in Charts
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold">
-                About State of Mind
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground">
-                State of Mind refers to your momentary emotions or daily moods.
-                Keeping a log of your momentary emotions and daily moods can help
-                you identify patterns and improve your well-being.
-              </p>
-            </CardContent>
-          </Card>
+        <div className="mt-12">
+          <Link href="/mood-meter">
+            <button className="px-8 py-3 text-lg font-semibold text-primary-foreground bg-primary rounded-full shadow-lg hover:bg-primary/90 transition-all duration-300 transform hover:scale-110">
+              How are you feeling today?
+            </button>
+          </Link>
         </div>
       </main>
     </div>

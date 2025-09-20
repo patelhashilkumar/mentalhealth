@@ -3,7 +3,6 @@ import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import './globals.css';
 import { MoodProvider } from '@/context/mood-context';
-import BottomNav from '@/components/bottom-nav';
 
 export const metadata: Metadata = {
   title: 'AI Doc',
@@ -29,11 +28,10 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className={cn('font-body antialiased pb-20')}>
+      <body className={cn('font-body antialiased')}>
         <MoodProvider>
           {children}
           <Toaster />
-          <BottomNav />
         </MoodProvider>
       </body>
     </html>

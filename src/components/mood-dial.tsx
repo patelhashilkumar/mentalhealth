@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { useMood } from '@/context/mood-context';
 
 const moods = [
   { name: 'Very Unpleasant', emoji: '😠', color: 'hsl(0, 84%, 60%)', value: 0 },
@@ -35,10 +34,10 @@ const MoodDial = () => {
   const dialRef = useRef<HTMLDivElement>(null);
   const [angle, setAngle] = useState(0);
   const { toast } = useToast();
-  const { setMood } = useMood();
   const router = useRouter();
 
   useEffect(() => {
+    // Start at Neutral
     const neutralIndex = moods.findIndex(m => m.name === 'Neutral');
     const step = (Math.PI * 2) / moods.length;
     const initialAngle = -Math.PI / 2 + neutralIndex * step;
@@ -48,6 +47,7 @@ const MoodDial = () => {
   const selectedMood = useMemo(() => {
     const numMoods = moods.length;
     const step = (2 * Math.PI) / numMoods;
+    // Normalize angle to be positive
     let normalizedAngle = (angle + Math.PI / 2 + 2 * Math.PI) % (2 * Math.PI);
     let moodIndex = Math.round(normalizedAngle / step) % numMoods;
     return moods[moodIndex];
@@ -66,7 +66,6 @@ const MoodDial = () => {
 
   const handleLogMood = () => {
     if (selectedMood) {
-      setMood(selectedMood);
       toast({
         title: 'Mood Logged!',
         description: `You're feeling: ${selectedMood.name} ${selectedMood.emoji}`,
@@ -90,7 +89,7 @@ const MoodDial = () => {
         {...bind()}
         style={{ touchAction: 'none' }}
       >
-        <div className="absolute w-full h-full border-8 border-card rounded-full shadow-inner bg-background" />
+        <div className="absolute w-full h-full border-8 border-card rounded-full shadow-inner bg-background/80 backdrop-blur-xl" />
 
         {moods.map((mood, index) => {
           const numMoods = moods.length;
@@ -121,7 +120,7 @@ const MoodDial = () => {
           );
         })}
 
-        <div className="absolute w-[220px] h-[220px] bg-card rounded-full flex items-center justify-center shadow-lg">
+        <div className="absolute w-[220px] h-[220px] bg-card/50 backdrop-blur-xl rounded-full flex items-center justify-center shadow-lg">
           <span
             className="text-8xl transition-transform duration-300 ease-in-out"
             style={{ transform: `scale(${selectedMood ? 1 : 0.5})` }}
@@ -130,8 +129,9 @@ const MoodDial = () => {
           </span>
         </div>
 
+        {/* Handle */}
         <div
-          className="absolute rounded-full border-4 border-background shadow-lg transition-colors"
+          className="absolute rounded-full border-4 border-background/80 shadow-lg transition-colors"
           style={{
             width: HANDLE_SIZE,
             height: HANDLE_SIZE,
