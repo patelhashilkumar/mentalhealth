@@ -50,7 +50,7 @@ export default function ChatInterface() {
     }
   }, [messages]);
 
-    const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
@@ -81,7 +81,7 @@ export default function ChatInterface() {
     }
 
     try {
-      const result = await getAiReply(userMessage.content);
+      const result = await getAiReply(userMessage.content as string);
       const aiMessage: Message = {
         id: (Date.now() + 2).toString(),
         role: 'ai',
@@ -134,27 +134,31 @@ export default function ChatInterface() {
                 {message.role === 'loading' ? (
                   <LoadingDots />
                 ) : message.role === 'user' ? (
-                  <p className="whitespace-pre-wrap text-sm">{message.content}</p>
+                  <p className="whitespace-pre-wrap text-sm">{message.content as string}</p>
                 ) : (
                   <div className="space-y-4">
                     <Table className="table-auto w-full">
                       <TableHeader>
                         <TableRow>
                           <TableHead className="w-[25%]">Condition</TableHead>
-                          <TableHead className="w-[45%]">Description (Key Symptoms)</TableHead>
+                          <TableHead className="w-[45%]">
+                            Description (Key Symptoms)
+                          </TableHead>
                           <TableHead className="w-[30%]">Advice</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {(message.content as AIHealthConsultationOutput).recommendations.map(
-                          (rec, index) => (
-                            <TableRow key={index}>
-                              <TableCell className="font-medium">{rec.condition}</TableCell>
-                              <TableCell>{rec.description}</TableCell>
-                              <TableCell>{rec.advice}</TableCell>
-                            </TableRow>
-                          )
-                        )}
+                        {(
+                          message.content as AIHealthConsultationOutput
+                        ).recommendations.map((rec, index) => (
+                          <TableRow key={index}>
+                            <TableCell className="font-medium">
+                              {rec.condition}
+                            </TableCell>
+                            <TableCell>{rec.description}</TableCell>
+                            <TableCell>{rec.advice}</TableCell>
+                          </TableRow>
+                        ))}
                       </TableBody>
                     </Table>
                   </div>
@@ -170,10 +174,12 @@ export default function ChatInterface() {
             </div>
           ))}
           {messages.length === 0 && (
-             <div className="text-center text-muted-foreground py-20">
+            <div className="text-center text-muted-foreground py-20">
               <HeartPulse className="w-12 h-12 mx-auto mb-4 text-primary/50" />
               <p className="text-lg font-medium">Welcome to AI Doc</p>
-              <p className="text-sm">Describe your symptoms to get started.</p>
+              <p className="text-sm">
+                Describe your symptoms to get started.
+              </p>
             </div>
           )}
         </div>
@@ -188,7 +194,7 @@ export default function ChatInterface() {
               onKeyDown={e => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
-                  handleSubmit(e);
+                  handleSubmit(e as unknown as FormEvent);
                 }
               }}
               placeholder="Describe your symptoms..."
