@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, type FormEvent } from 'react';
+import React, { useState, useRef, useEffect, type FormEvent } from 'react';
 import { Send, User, HeartPulse } from 'lucide-react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -50,8 +50,12 @@ export default function ChatInterface() {
     }
   }, [messages]);
 
-  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -72,6 +76,9 @@ export default function ChatInterface() {
     setMessages(prev => [...prev, userMessage, loadingMessage]);
     setInput('');
     setIsLoading(true);
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+    }
 
     try {
       const result = await getAiReply(userMessage.content);
@@ -129,25 +136,25 @@ export default function ChatInterface() {
                 ) : message.role === 'user' ? (
                   <p className="whitespace-pre-wrap text-sm">{message.content}</p>
                 ) : (
-                  <div>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Condition</TableHead>
-                          <TableHead>Description</TableHead>
-                          <TableHead>Advice</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {(message.content as AIHealthConsultationOutput).recommendations.map((rec, index) => (
-                          <TableRow key={index}>
-                            <TableCell className="font-medium">{rec.condition}</TableCell>
+                  <div className="space-y-4">
+                    {(message.content as AIHealthConsultationOutput).recommendations.map((rec, index) => (
+                      <Table key={index}>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell className="font-medium w-1/3">Condition</TableCell>
+                            <TableCell>{rec.condition}</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell className="font-medium">Description</TableCell>
                             <TableCell>{rec.description}</TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell className="font-medium">Advice</TableCell>
                             <TableCell>{rec.advice}</TableCell>
                           </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
+                        </TableBody>
+                      </Table>
+                    ))}
                     <p className="text-xs text-muted-foreground mt-4">
                       {(message.content as AIHealthConsultationOutput).disclaimer}
                     </p>
@@ -186,7 +193,7 @@ export default function ChatInterface() {
                 }
               }}
               placeholder="Describe your symptoms..."
-              className="flex-1 resize-none bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none text-base min-h-[40px] max-h-30"
+              className="flex-1 resize-none bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none text-base min-h-[40px] max-h-40 overflow-y-auto"
               rows={1}
               disabled={isLoading}
             />
