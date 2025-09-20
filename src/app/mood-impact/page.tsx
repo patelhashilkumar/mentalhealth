@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ArrowLeft, Info } from 'lucide-react';
+import { ArrowLeft, Info, Check } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -141,10 +141,11 @@ export default function MoodImpactPage() {
       <footer className="p-4 text-center border-t border-border/10">
         <Button
           size="lg"
-          className="bg-primary text-primary-foreground text-lg rounded-full px-12"
+          className="bg-primary text-primary-foreground text-lg rounded-full px-12 shadow-lg shadow-primary/20"
           onClick={handleDone}
         >
           Done
+          <Check />
         </Button>
       </footer>
     </div>
