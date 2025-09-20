@@ -6,6 +6,7 @@ import {
   ShieldCheck,
   HeartPulse,
   Bird,
+  Workflow,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -107,9 +108,11 @@ export default function GamesPage() {
     if (age >= 12 && age <= 17) {
       return (
         <GameSection title="Games for ages 12-17">
-          <GameCardPlaceholder
-            gameTitle="Mindful Maze"
+          <GameCard
+            title="Mindful Maze"
             description="A calming puzzle game where you collect positive thoughts."
+            href="/games/mindful-maze"
+            icon={<Workflow className="w-8 h-8 text-primary" />}
           />
           <GameCardPlaceholder
             gameTitle="Echo Grove"
