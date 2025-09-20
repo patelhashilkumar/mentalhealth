@@ -140,11 +140,11 @@ export default function ChatInterface() {
                     <Table className="table-auto w-full">
                       <TableHeader>
                         <TableRow>
-                          <TableHead className="w-[25%]">Condition</TableHead>
-                          <TableHead className="w-[45%]">
+                          <TableHead className="w-1/3">Condition</TableHead>
+                          <TableHead className="w-1/3">
                             Description (Key Symptoms)
                           </TableHead>
-                          <TableHead className="w-[30%]">Advice</TableHead>
+                          <TableHead className="w-1/3">Advice</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
