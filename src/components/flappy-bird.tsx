@@ -21,7 +21,7 @@ export default function FlappyBird() {
 
     // State
     let lastTime = 0;
-    let pipes: { x: number; top: number }[] = [];
+    let pipes: { x: number; top: number, passed?: boolean }[] = [];
     let running = false;
     let gameOver = false;
     let score = 0;
@@ -51,7 +51,7 @@ export default function FlappyBird() {
       }
       if (e.key === 'r' || e.key === 'R') reset();
     }
-
+    
     function handleCanvasClick() {
       if(gameOver) {
         reset();
@@ -123,9 +123,9 @@ export default function FlappyBird() {
           score++;
           if (score > highScore) highScore = score;
         }
-
+        
         if (pipes.length && pipes[0].x + PIPE_W < 0) {
-          pipes.shift();
+            pipes.shift();
         }
 
 
@@ -245,7 +245,7 @@ export default function FlappyBird() {
         ctx.fillText('Game Over', canvas.width / 2, canvas.height / 2 - 18);
         ctx.font = '18px system-ui, Segoe UI, Roboto';
         ctx.fillText('Score: ' + score + '   High: ' + highScore, canvas.width / 2, canvas.height / 2 + 12);
-        ctx.fillText('Press R or Click to Restart', canvas.width / 2, canvas.height / 2 + 42);
+        ctx.fillText('Click to Restart', canvas.width / 2, canvas.height / 2 + 42);
       }
     }
 
@@ -277,6 +277,9 @@ export default function FlappyBird() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('resize', fit);
+      canvas.removeEventListener('mousedown', handleCanvasClick);
+      // It's good practice to clean up touch listeners as well
+      canvas.removeEventListener('touchstart', handleCanvasClick);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
