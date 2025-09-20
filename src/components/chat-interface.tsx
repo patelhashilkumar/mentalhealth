@@ -1,20 +1,28 @@
 'use client';
 
 import { useState, useRef, useEffect, type FormEvent } from 'react';
-import * as React from 'react';
 import { Send, User, HeartPulse } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { getAiReply } from '@/app/actions';
+import type { AIHealthConsultationOutput } from '@/ai/flows/ai-health-consultation';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 interface Message {
   id: string;
   role: 'user' | 'ai' | 'loading';
-  content: string;
+  content: string | AIHealthConsultationOutput;
 }
 
 const LoadingDots = () => (
@@ -44,18 +52,6 @@ export default function ChatInterface() {
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      const scrollHeight = textareaRef.current.scrollHeight;
-      const maxHeight = 120; // Corresponds to max-h-30
-      if (scrollHeight > maxHeight) {
-        textareaRef.current.style.height = `${maxHeight}px`;
-        textareaRef.current.style.overflowY = 'auto';
-      } else {
-        textareaRef.current.style.height = `${scrollHeight}px`;
-        textareaRef.current.style.overflowY = 'hidden';
-      }
-    }
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -75,9 +71,6 @@ export default function ChatInterface() {
 
     setMessages(prev => [...prev, userMessage, loadingMessage]);
     setInput('');
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'; // Reset height
-    }
     setIsLoading(true);
 
     try {
@@ -85,7 +78,7 @@ export default function ChatInterface() {
       const aiMessage: Message = {
         id: (Date.now() + 2).toString(),
         role: 'ai',
-        content: result.reply,
+        content: result,
       };
       setMessages(prev =>
         prev.map(msg => (msg.role === 'loading' ? aiMessage : msg))
@@ -124,17 +117,41 @@ export default function ChatInterface() {
               )}
               <div
                 className={cn(
-                  'max-w-md lg:max-w-lg p-4 rounded-2xl text-foreground',
+                  'max-w-md lg:max-w-2xl p-4 rounded-2xl text-foreground w-full',
                   message.role === 'user'
-                    ? 'bg-primary/20 rounded-br-none'
+                    ? 'bg-primary/20 rounded-br-none max-w-md'
                     : 'bg-card/60 backdrop-blur-sm border border-border/50 rounded-bl-none',
-                  message.role === 'loading' && 'p-4'
+                  message.role === 'loading' && 'p-4 max-w-md'
                 )}
               >
                 {message.role === 'loading' ? (
                   <LoadingDots />
-                ) : (
+                ) : message.role === 'user' ? (
                   <p className="whitespace-pre-wrap text-sm">{message.content}</p>
+                ) : (
+                  <div>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Condition</TableHead>
+                          <TableHead>Description</TableHead>
+                          <TableHead>Advice</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {(message.content as AIHealthConsultationOutput).recommendations.map((rec, index) => (
+                          <TableRow key={index}>
+                            <TableCell className="font-medium">{rec.condition}</TableCell>
+                            <TableCell>{rec.description}</TableCell>
+                            <TableCell>{rec.advice}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                    <p className="text-xs text-muted-foreground mt-4">
+                      {(message.content as AIHealthConsultationOutput).disclaimer}
+                    </p>
+                  </div>
                 )}
               </div>
               {message.role === 'user' && (
