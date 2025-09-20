@@ -6,22 +6,22 @@ import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
 
 const moods = [
-  { name: 'Very Pleasant', color: 'hsl(120, 100%, 75%)', value: 5 },
-  { name: 'Pleasant', color: 'hsl(90, 100%, 75%)', value: 4 },
-  { name: 'Slightly Pleasant', color: 'hsl(60, 100%, 75%)', value: 3 },
-  { name: 'Neutral', color: 'hsl(0, 0%, 75%)', value: 2 },
-  { name: 'Slightly Unpleasant', color: 'hsl(30, 100%, 75%)', value: 1 },
-  { name: 'Unpleasant', color: 'hsl(0, 100%, 75%)', value: 0 },
-  { name: 'Very Unpleasant', color: 'hsl(0, 100%, 60%)', value: -1 },
-].reverse();
+  { name: 'Very Unpleasant', emoji: '😠', color: 'hsl(0, 84%, 60%)', value: 0 },
+  { name: 'Unpleasant', emoji: '😟', color: 'hsl(30, 84%, 60%)', value: 1 },
+  { name: 'Slightly Unpleasant', emoji: '😕', color: 'hsl(60, 84%, 60%)', value: 2 },
+  { name: 'Neutral', emoji: '😐', color: 'hsl(240, 5%, 65%)', value: 3 },
+  { name: 'Slightly Pleasant', emoji: '🙂', color: 'hsl(120, 60%, 65%)', value: 4 },
+  { name: 'Pleasant', emoji: '😊', color: 'hsl(140, 60%, 60%)', value: 5 },
+  { name: 'Very Pleasant', emoji: '😄', color: 'hsl(160, 80%, 60%)', value: 6 },
+];
 
 const DIAL_RADIUS = 140;
-const HANDLE_SIZE = 24;
-const LABEL_RADIUS = DIAL_RADIUS + 40;
+const HANDLE_SIZE = 32;
+const LABEL_RADIUS = DIAL_RADIUS + 50;
 
 const MoodDial = () => {
   const dialRef = useRef<HTMLDivElement>(null);
-  const [angle, setAngle] = useState(-Math.PI / 2);
+  const [angle, setAngle] = useState(0);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -39,7 +39,7 @@ const MoodDial = () => {
     return moods[moodIndex];
   }, [angle]);
 
-  const bind = useDrag(({ xy, down }) => {
+  const bind = useDrag(({ xy }) => {
     if (dialRef.current) {
       const { left, top, width, height } =
         dialRef.current.getBoundingClientRect();
@@ -53,8 +53,8 @@ const MoodDial = () => {
   const handleLogMood = () => {
     if (selectedMood) {
       toast({
-        title: 'Mood Logged',
-        description: `You're feeling: ${selectedMood.name}`,
+        title: 'Mood Logged!',
+        description: `You're feeling: ${selectedMood.name} ${selectedMood.emoji}`,
       });
     }
   };
@@ -66,12 +66,12 @@ const MoodDial = () => {
     <div className="flex flex-col items-center gap-8">
       <div
         ref={dialRef}
-        className="relative w-[360px] h-[360px] rounded-full flex items-center justify-center cursor-pointer bg-card border"
+        className="relative w-[380px] h-[380px] rounded-full flex items-center justify-center cursor-pointer"
         {...bind()}
         style={{ touchAction: 'none' }}
       >
-        <div className="absolute w-[280px] h-[280px] border-4 border-primary/20 rounded-full" />
-
+        <div className="absolute w-full h-full border-8 border-card rounded-full shadow-inner" />
+        
         {moods.map((mood, index) => {
           const numMoods = moods.length;
           const moodAngle = -Math.PI / 2 + (index / numMoods) * (2 * Math.PI);
@@ -91,44 +91,63 @@ const MoodDial = () => {
             >
               <span
                 className={cn(
-                  'text-sm transition-all duration-300 text-center',
+                  'text-4xl transition-all duration-300 text-center',
                   isSelected
-                    ? 'font-bold text-foreground scale-110'
-                    : 'text-muted-foreground'
+                    ? 'scale-125'
+                    : 'opacity-50 scale-90'
                 )}
               >
-                {mood.name}
+                {mood.emoji}
               </span>
             </div>
           );
         })}
 
+        <div className="absolute w-[220px] h-[220px] bg-background rounded-full flex items-center justify-center shadow-lg">
+           <span className="text-8xl transition-transform duration-300 ease-in-out" style={{transform: `scale(${selectedMood ? 1 : 0.5})`}}>{selectedMood?.emoji}</span>
+        </div>
+
         <div
-          className="absolute rounded-full bg-primary border-4 border-background shadow-lg"
+          className="absolute rounded-full border-4 border-background shadow-lg transition-colors"
           style={{
             width: HANDLE_SIZE,
             height: HANDLE_SIZE,
             transform: `translate(-50%, -50%) translate(${handleX}px, ${handleY}px)`,
             left: '50%',
             top: '50%',
+            backgroundColor: selectedMood?.color || 'hsl(var(--primary))',
           }}
         />
       </div>
 
-      <div className="h-20 flex flex-col items-center justify-center">
+      <div className="h-20 flex flex-col items-center justify-center text-center">
         {selectedMood && (
-          <div className="text-center">
+          <>
             <p
-              className="text-2xl font-bold text-primary"
+              className="text-3xl font-bold transition-colors"
+              style={{ color: selectedMood.color }}
             >
               {selectedMood.name}
             </p>
-            <p className="text-muted-foreground">You have selected a mood</p>
-          </div>
+            <p className="text-muted-foreground mt-1">
+              You have selected a mood.
+            </p>
+          </>
         )}
       </div>
 
-      <Button disabled={!selectedMood} size="lg" onClick={handleLogMood}>
+      <Button
+        disabled={!selectedMood}
+        size="lg"
+        onClick={handleLogMood}
+        className="transition-colors"
+        style={{
+          backgroundColor: selectedMood
+            ? selectedMood.color
+            : 'hsl(var(--muted))',
+          color: 'hsl(var(--primary-foreground))',
+        }}
+      >
         Log Mood
       </Button>
     </div>
