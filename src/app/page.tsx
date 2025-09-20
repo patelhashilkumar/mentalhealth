@@ -25,9 +25,8 @@ export default function Dashboard() {
           <FeatureCard
             title="Mood Meter"
             description="Log and track your daily mood."
-            href="#"
+            href="/mood-meter"
             icon={<Smile className="w-8 h-8 text-primary" />}
-            disabled
           />
           <FeatureCard
             title="Feed"
