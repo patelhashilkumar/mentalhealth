@@ -1,67 +1,81 @@
 'use client';
-
-import { Stethoscope, Newspaper, Gamepad2 } from 'lucide-react';
+import { useMemo } from 'react';
+import { format } from 'date-fns';
+import { ArrowLeft, CalendarDays } from 'lucide-react';
 import Link from 'next/link';
+
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { useMood } from '@/context/mood-context';
+import DailyMood from '@/components/daily-mood';
 
-const features = [
-  {
-    title: 'AI Doc',
-    description: 'Get AI-powered medical advice.',
-    icon: Stethoscope,
-    href: '/ai-doc',
-  },
-  {
-    title: 'Feed',
-    description: 'Discover content about mental health.',
-    icon: Newspaper,
-    href: '/feed',
-  },
-  {
-    title: 'Games',
-    description: 'Relax with some fun games.',
-    icon: Gamepad2,
-    href: '/games',
-  },
-];
+export default function StateOfMindPage() {
+  const { mood } = useMood();
+  const today = useMemo(() => format(new Date(), 'd LLL'), []);
 
-export default function Dashboard() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-background text-foreground">
-      <main className="container flex flex-col items-center justify-center flex-1 p-4">
-        <div className="mb-12 text-center">
-          <h1 className="text-5xl font-bold tracking-tighter font-headline">
-            AI Health Assistant
-          </h1>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Your all-in-one companion for better well-being.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-4xl w-full">
-          {features.map((feature) => (
-            <Link key={feature.title} href={feature.href} passHref>
-              <Card className="flex flex-col h-full transition-all duration-300 transform hover:scale-105 hover:shadow-primary/20 bg-card/50 backdrop-blur-xl hover:border-primary/50">
-                <CardHeader className="flex-row items-center gap-4">
-                  <feature.icon className="w-8 h-8 text-primary" />
-                  <CardTitle className="text-xl font-bold font-headline">
-                    {feature.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex-1">
-                  <p className="text-muted-foreground">{feature.description}</p>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-
-        <div className="mt-12">
-          <Link href="/mood-meter">
-            <button className="px-8 py-3 text-lg font-semibold text-primary-foreground bg-primary rounded-full shadow-lg shadow-primary/30 hover:bg-primary/90 transition-all duration-300 transform hover:scale-110">
-              How are you feeling today?
-            </button>
+    <div className="flex flex-col min-h-screen bg-background text-foreground">
+      <header className="flex items-center justify-between p-4">
+        <Button variant="ghost" size="sm" asChild>
+          {/* This would ideally link to a parent "Summary" page, for now it goes to itself */}
+          <Link href="/">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Summary
           </Link>
+        </Button>
+        <h1 className="text-lg font-semibold">State of Mind</h1>
+        <Button variant="ghost" size="icon">
+          <CalendarDays className="h-5 w-5" />
+        </Button>
+      </header>
+      <main className="flex-1 flex-col items-center p-4">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold">Today, {today}</h2>
+          <Button asChild className="rounded-full bg-blue-500 hover:bg-blue-600 text-white">
+            <Link href="/mood-meter">Log</Link>
+          </Button>
+        </div>
+
+        <Card className="w-full bg-card/80 border-0 shadow-none">
+          <CardHeader>
+            <CardTitle className="text-center text-xs font-medium text-muted-foreground tracking-widest">
+              DAILY MOOD
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center justify-center gap-6 pt-6 pb-12">
+            <DailyMood mood={mood} />
+            <h3 className="text-2xl font-medium">
+              {mood ? `A ${mood.name} Day` : 'No mood logged'}
+            </h3>
+          </CardContent>
+        </Card>
+
+        <Card className="w-full bg-transparent border-0 shadow-none mt-6">
+          <CardHeader className="p-0">
+            <CardTitle className="text-xs font-medium text-muted-foreground tracking-widest mb-2">
+              MOMENTARY EMOTIONS
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="rounded-lg bg-card/80 p-4 text-center">
+              <p className="text-muted-foreground">No Entries</p>
+            </div>
+            <Button variant="link" className="text-blue-500 w-full mt-2">
+              Show in Charts
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Separator className="my-6 bg-border/50" />
+
+        <div className="mt-6">
+          <h3 className="text-lg font-semibold mb-2">About State of Mind</h3>
+          <p className="text-muted-foreground text-sm">
+            State of Mind refers to your momentary emotions or daily moods.
+            Keeping a log of your momentary emotions and daily moods can
+            help you understand yourself better.
+          </p>
         </div>
       </main>
     </div>

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useMood } from '@/context/mood-context';
 
 const moods = [
   { name: 'Very Unpleasant', emoji: '😠', color: 'hsl(0, 84%, 60%)', value: 0 },
@@ -33,6 +34,7 @@ const LABEL_RADIUS = DIAL_RADIUS + 50;
 const MoodDial = () => {
   const dialRef = useRef<HTMLDivElement>(null);
   const [angle, setAngle] = useState(0);
+  const { setMood } = useMood();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -66,6 +68,7 @@ const MoodDial = () => {
 
   const handleLogMood = () => {
     if (selectedMood) {
+      setMood({ name: selectedMood.name, emoji: selectedMood.emoji });
       toast({
         title: 'Mood Logged!',
         description: `You're feeling: ${selectedMood.name} ${selectedMood.emoji}`,
