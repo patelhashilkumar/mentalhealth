@@ -110,8 +110,9 @@ export default function PulseRunner() {
       if (status !== 'playing') return;
 
       // Player physics
-      setPlayerVelY(prev => prev + GRAVITY);
-      setPlayerY(prev => Math.min(GAME_HEIGHT - PLAYER_SIZE, prev + playerVelY));
+      setPlayerVelY(prevVelY => prevVelY + GRAVITY);
+      setPlayerY(prevY => Math.min(GAME_HEIGHT - PLAYER_SIZE, prevY + playerVelY));
+
 
       // Move obstacles
       setObstacles(prev =>
@@ -161,7 +162,7 @@ export default function PulseRunner() {
       if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
       if (scoreIntervalRef.current) clearInterval(scoreIntervalRef.current);
     };
-  }, [status, playerVelY, obstacles, gameSpeed]);
+  }, [status, playerVelY, obstacles, gameSpeed, playerY]);
 
   return (
     <div className="flex flex-col items-center gap-4">
