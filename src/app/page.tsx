@@ -1,87 +1,73 @@
 'use client';
 
-import {
-  Stethoscope,
-  BookHeart,
-  Smile,
-  Newspaper,
-  Gamepad2,
-} from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Calendar, Layers, Share2, Heart } from 'lucide-react';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import DailyMood from '@/components/daily-mood';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function Dashboard() {
+  const [date, setDate] = useState('');
+
+  useEffect(() => {
+    const today = new Date();
+    const options: Intl.DateTimeFormatOptions = {
+      day: 'numeric',
+      month: 'short',
+    };
+    setDate(today.toLocaleDateString('en-US', options));
+  }, []);
+
   return (
-    <div className="flex flex-col h-screen bg-background">
-      <header className="flex items-center justify-between p-4 bg-transparent">
-        <div className="flex items-center">
-          <BookHeart className="w-8 h-8 mr-3 text-primary" />
-          <h1 className="text-2xl font-bold tracking-tight text-foreground font-headline">
-            State of Mind
-          </h1>
-        </div>
+    <div className="flex flex-col min-h-screen bg-background text-foreground">
+      <header className="sticky top-0 z-10 flex items-center justify-between p-4 bg-background/80 backdrop-blur-sm">
+        <h1 className="text-xl font-bold">State of Mind</h1>
+        <Button variant="ghost" size="icon">
+          <Calendar className="w-5 h-5" />
+        </Button>
       </header>
-      <main className="flex-1 p-6">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-          <FeatureCard
-            title="AI Doc"
-            description="Your personal AI health assistant."
-            href="/ai-doc"
-            icon={<Stethoscope className="w-8 h-8 text-primary" />}
-          />
-          <FeatureCard
-            title="Mood Meter"
-            description="Log and track your daily mood."
-            href="/mood-meter"
-            icon={<Smile className="w-8 h-8 text-primary" />}
-          />
-          <FeatureCard
-            title="Feed"
-            description="Discover content and connect with others."
-            href="/feed"
-            icon={<Newspaper className="w-8 h-8 text-primary" />}
-          />
-          <FeatureCard
-            title="Games"
-            description="Play games to relax and unwind."
-            href="/games"
-            icon={<Gamepad2 className="w-8 h-8 text-primary" />}
-          />
+      <main className="flex-1 p-4">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-semibold">Today, {date}</h2>
+          <Button asChild>
+            <Link href="/mood-meter">Log</Link>
+          </Button>
+        </div>
+
+        <div className="space-y-6">
+          <DailyMood />
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                MOMENTARY EMOTIONS
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-center text-muted-foreground">No Entries</p>
+              <Button variant="link" className="w-full mt-2 text-primary">
+                Show in Charts
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold">
+                About State of Mind
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">
+                State of Mind refers to your momentary emotions or daily moods.
+                Keeping a log of your momentary emotions and daily moods can help
+                you identify patterns and improve your well-being.
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </main>
     </div>
   );
-}
-
-function FeatureCard({
-  title,
-  description,
-  href,
-  icon,
-  disabled = false,
-}: {
-  title: string;
-  description: string;
-  href: string;
-  icon: React.ReactNode;
-  disabled?: boolean;
-}) {
-  const content = (
-    <div
-      className={`flex flex-col items-center justify-center p-6 text-center transition-all duration-300 bg-secondary/50 border border-secondary shadow-lg rounded-lg ${
-        disabled
-          ? 'opacity-50 cursor-not-allowed'
-          : 'hover:bg-secondary hover:scale-105'
-      }`}
-    >
-      <div className="p-4 mb-4 rounded-full bg-primary/10">{icon}</div>
-      <h2 className="text-xl font-bold text-foreground">{title}</h2>
-      <p className="text-sm text-muted-foreground">{description}</p>
-    </div>
-  );
-
-  if (disabled) {
-    return content;
-  }
-
-  return <Link href={href}>{content}</Link>;
 }

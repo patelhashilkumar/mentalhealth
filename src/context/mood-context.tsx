@@ -8,20 +8,24 @@ import React, {
   useMemo,
 } from 'react';
 
+type Mood = {
+  name: string;
+  emoji: string;
+  color: string;
+  value: number;
+};
+
 type MoodContextType = {
-  moodEmoji: string | null;
-  setMoodEmoji: (emoji: string | null) => void;
+  mood: Mood | null;
+  setMood: (mood: Mood | null) => void;
 };
 
 const MoodContext = createContext<MoodContextType | undefined>(undefined);
 
 export function MoodProvider({ children }: { children: ReactNode }) {
-  const [moodEmoji, setMoodEmoji] = useState<string | null>(null);
+  const [mood, setMood] = useState<Mood | null>(null);
 
-  const value = useMemo(
-    () => ({ moodEmoji, setMoodEmoji }),
-    [moodEmoji]
-  );
+  const value = useMemo(() => ({ mood, setMood }), [mood]);
 
   return <MoodContext.Provider value={value}>{children}</MoodContext.Provider>;
 }

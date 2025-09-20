@@ -35,7 +35,7 @@ const MoodDial = () => {
   const dialRef = useRef<HTMLDivElement>(null);
   const [angle, setAngle] = useState(0);
   const { toast } = useToast();
-  const { setMoodEmoji } = useMood();
+  const { setMood } = useMood();
   const router = useRouter();
 
   useEffect(() => {
@@ -66,7 +66,7 @@ const MoodDial = () => {
 
   const handleLogMood = () => {
     if (selectedMood) {
-      setMoodEmoji(selectedMood.emoji);
+      setMood(selectedMood);
       toast({
         title: 'Mood Logged!',
         description: `You're feeling: ${selectedMood.name} ${selectedMood.emoji}`,
@@ -90,7 +90,7 @@ const MoodDial = () => {
         {...bind()}
         style={{ touchAction: 'none' }}
       >
-        <div className="absolute w-full h-full border-8 border-card rounded-full shadow-inner" />
+        <div className="absolute w-full h-full border-8 border-card rounded-full shadow-inner bg-background" />
 
         {moods.map((mood, index) => {
           const numMoods = moods.length;
@@ -121,7 +121,7 @@ const MoodDial = () => {
           );
         })}
 
-        <div className="absolute w-[220px] h-[220px] bg-background rounded-full flex items-center justify-center shadow-lg">
+        <div className="absolute w-[220px] h-[220px] bg-card rounded-full flex items-center justify-center shadow-lg">
           <span
             className="text-8xl transition-transform duration-300 ease-in-out"
             style={{ transform: `scale(${selectedMood ? 1 : 0.5})` }}
