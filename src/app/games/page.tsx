@@ -114,7 +114,12 @@ export default function GamesPage() {
             href="/games/mindquest"
             icon={<ShieldCheck className="w-8 h-8 text-primary" />}
           />
-          <GameCardPlaceholder gameTitle="PulseRunner" />
+          <GameCard
+            title="PulseRunner"
+            description="Flap your way to a high score in this relaxing classic."
+            href="/games/pulserunner"
+            icon={<HeartPulse className="w-8 h-8 text-primary" />}
+          />
           <GameCardPlaceholder gameTitle="Zenith Zone" />
         </GameSection>
       );
