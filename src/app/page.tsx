@@ -4,12 +4,19 @@ import ChatInterface from '@/components/chat-interface';
 import { useAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { useEffect } from 'react';
 
 export default function Home() {
   const { user, loading, logout } = useAuth();
   const router = useRouter();
 
-  if (loading) {
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace('/login');
+    }
+  }, [user, loading, router]);
+
+  if (loading || !user) {
     return (
       <div className="flex items-center justify-center h-screen">
         <p>Loading...</p>
@@ -17,10 +24,6 @@ export default function Home() {
     );
   }
 
-  if (!user) {
-    router.replace('/login');
-    return null;
-  }
   return (
     <div className="flex flex-col h-screen bg-background/80 backdrop-blur-xl">
       <header className="flex items-center justify-between p-4 border-b border-white/10 shadow-sm">
