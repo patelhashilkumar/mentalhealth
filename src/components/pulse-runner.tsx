@@ -11,7 +11,8 @@ const PLAYER_SIZE = 40;
 const OBSTACLE_WIDTH = 30;
 const OBSTACLE_HEIGHT = 60;
 const JUMP_HEIGHT = 120;
-const GRAVITY = 3;
+const GRAVITY = 2;
+const JUMP_IMPULSE = -25;
 const PERFECT_INTERVAL = 500; // ms
 const INTERVAL_TOLERANCE = 150; // ms
 
@@ -101,7 +102,7 @@ export default function PulseRunner() {
 
     // Jump
     if (playerY >= GAME_HEIGHT - PLAYER_SIZE) {
-      setPlayerVelY(-30);
+      setPlayerVelY(JUMP_IMPULSE);
     }
   };
 
@@ -110,8 +111,11 @@ export default function PulseRunner() {
       if (status !== 'playing') return;
 
       // Player physics
-      setPlayerVelY(prevVelY => prevVelY + GRAVITY);
-      setPlayerY(prevY => Math.min(GAME_HEIGHT - PLAYER_SIZE, prevY + playerVelY));
+      setPlayerVelY(prevVelY => {
+        const newVelY = prevVelY + GRAVITY;
+        setPlayerY(prevY => Math.min(GAME_HEIGHT - PLAYER_SIZE, prevY + newVelY));
+        return newVelY;
+      });
 
 
       // Move obstacles
@@ -162,7 +166,7 @@ export default function PulseRunner() {
       if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
       if (scoreIntervalRef.current) clearInterval(scoreIntervalRef.current);
     };
-  }, [status, playerVelY, obstacles, gameSpeed, playerY]);
+  }, [status, obstacles, gameSpeed, playerY]);
 
   return (
     <div className="flex flex-col items-center gap-4">
