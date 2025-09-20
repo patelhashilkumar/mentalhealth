@@ -1,5 +1,5 @@
 'use client';
-import { Gamepad2, ArrowLeft, Play } from 'lucide-react';
+import { Gamepad2, ArrowLeft, Play, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -32,15 +32,20 @@ const GameCard = ({
   title,
   description,
   href,
+  icon,
 }: {
-  title: string;
+  title:string;
   description: string;
   href: string;
+  icon?: React.ReactNode;
 }) => (
   <Card className="bg-card/80 flex flex-col">
-    <CardHeader>
-      <CardTitle>{title}</CardTitle>
-      <CardDescription>{description}</CardDescription>
+    <CardHeader className="flex flex-row items-start gap-4 space-y-0">
+      {icon && <div className="p-1">{icon}</div>}
+      <div className="flex-1">
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+      </div>
     </CardHeader>
     <CardContent className="flex-1" />
     <CardFooter>
@@ -96,7 +101,12 @@ export default function GamesPage() {
     } else if (age >= 18 && age <= 25) {
       return (
         <GameSection title="Games for ages 18-25">
-          <GameCardPlaceholder gameTitle="Resilience Runner" />
+          <GameCard
+            title="MindQuest"
+            description="Adventure RPG to relieve stress and connect with others."
+            href="/games/mindquest"
+            icon={<ShieldCheck className="w-8 h-8 text-primary" />}
+          />
           <GameCardPlaceholder gameTitle="Strategy Scape" />
           <GameCardPlaceholder gameTitle="Zenith Zone" />
         </GameSection>
