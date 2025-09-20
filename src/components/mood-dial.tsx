@@ -21,11 +21,10 @@ const LABEL_RADIUS = DIAL_RADIUS + 40;
 
 const MoodDial = () => {
   const dialRef = useRef<HTMLDivElement>(null);
-  const [angle, setAngle] = useState(-Math.PI / 2); // Start at the top (Neutral)
+  const [angle, setAngle] = useState(-Math.PI / 2);
   const { toast } = useToast();
 
   useEffect(() => {
-    // Set initial angle for Neutral mood on mount
     const neutralIndex = moods.findIndex(m => m.name === 'Neutral');
     const step = (Math.PI * 2) / moods.length;
     const initialAngle = -Math.PI / 2 + neutralIndex * step;
@@ -33,10 +32,11 @@ const MoodDial = () => {
   }, []);
 
   const selectedMood = useMemo(() => {
-    const normalizedAngle = (angle + Math.PI / 2 + Math.PI * 4) % (Math.PI * 2);
-    const step = (Math.PI * 2) / moods.length;
-    const moodIndex = Math.round(normalizedAngle / step);
-    return moods[moodIndex % moods.length];
+    const numMoods = moods.length;
+    const step = (2 * Math.PI) / numMoods;
+    let normalizedAngle = (angle + Math.PI / 2 + 2 * Math.PI) % (2 * Math.PI);
+    let moodIndex = Math.round(normalizedAngle / step) % numMoods;
+    return moods[moodIndex];
   }, [angle]);
 
   const bind = useDrag(({ xy, down }) => {
@@ -66,11 +66,10 @@ const MoodDial = () => {
     <div className="flex flex-col items-center gap-8">
       <div
         ref={dialRef}
-        className="relative w-[360px] h-[360px] rounded-full flex items-center justify-center cursor-pointer bg-background/20 backdrop-blur-xl border border-white/10"
+        className="relative w-[360px] h-[360px] rounded-full flex items-center justify-center cursor-pointer bg-white/10 backdrop-blur-xl border border-white/20"
         {...bind()}
         style={{ touchAction: 'none' }}
       >
-        {/* Radial Glow */}
         {selectedMood && (
           <div
             className="absolute w-full h-full rounded-full transition-all duration-300"
@@ -82,12 +81,11 @@ const MoodDial = () => {
           />
         )}
 
-        {/* The Dial Track */}
         <div className="absolute w-[280px] h-[280px] border-4 border-primary/20 rounded-full" />
 
-        {/* Mood Labels */}
         {moods.map((mood, index) => {
-          const moodAngle = -Math.PI / 2 + (index / moods.length) * Math.PI * 2;
+          const numMoods = moods.length;
+          const moodAngle = -Math.PI / 2 + (index / numMoods) * (2 * Math.PI);
           const labelX = LABEL_RADIUS * Math.cos(moodAngle);
           const labelY = LABEL_RADIUS * Math.sin(moodAngle);
           const isSelected = selectedMood?.name === mood.name;
@@ -116,7 +114,6 @@ const MoodDial = () => {
           );
         })}
 
-        {/* Draggable Handle */}
         <div
           className="absolute rounded-full bg-primary border-4 border-background shadow-lg"
           style={{

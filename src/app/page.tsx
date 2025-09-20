@@ -67,13 +67,13 @@ function FeatureCard({
 }) {
   const content = (
     <div
-      className={`flex flex-col items-center justify-center p-6 text-center transition-all duration-300 bg-background/30 backdrop-blur-xl border border-white/10 rounded-2xl shadow-lg ${
+      className={`flex flex-col items-center justify-center p-6 text-center transition-all duration-300 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-lg ${
         disabled
           ? 'opacity-50 cursor-not-allowed'
-          : 'hover:bg-primary/10 hover:scale-105'
+          : 'hover:bg-white/20 hover:scale-105'
       }`}
     >
-      <div className="p-4 mb-4 bg-primary/10 rounded-full">{icon}</div>
+      <div className="p-4 mb-4 bg-white/10 rounded-full">{icon}</div>
       <h2 className="text-xl font-bold text-foreground">{title}</h2>
       <p className="text-sm text-muted-foreground">{description}</p>
     </div>

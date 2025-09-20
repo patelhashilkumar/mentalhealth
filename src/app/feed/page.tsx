@@ -70,7 +70,7 @@ export default function FeedPage() {
             {feedItems.map((item) => (
               <div
                 key={item.id}
-                className="flex flex-col overflow-hidden transition-all duration-300 border shadow-lg bg-background/30 backdrop-blur-xl border-white/10 rounded-2xl hover:scale-105 hover:shadow-primary/20"
+                className="flex flex-col overflow-hidden transition-all duration-300 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-lg hover:scale-105 hover:shadow-primary/20"
               >
                 <div className="relative w-full h-48">
                   <Image
