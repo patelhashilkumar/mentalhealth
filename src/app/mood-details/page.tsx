@@ -142,10 +142,10 @@ export default function MoodDetailsPage() {
         </div>
       </main>
 
-      <footer className="p-4 border-t border-border/10">
+      <footer className="p-4 text-center border-t border-border/10">
         <Button
           size="lg"
-          className="w-full bg-primary text-primary-foreground text-lg rounded-full"
+          className="bg-primary text-primary-foreground text-lg rounded-full px-12"
           onClick={handleNext}
         >
           Next
