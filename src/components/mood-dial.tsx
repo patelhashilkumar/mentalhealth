@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { useDrag } from '@use-gesture/react';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
@@ -16,23 +16,30 @@ const moods = [
 
 const DIAL_RADIUS = 140;
 const HANDLE_SIZE = 24;
+const LABEL_RADIUS = DIAL_RADIUS + 40;
 
 const MoodDial = () => {
   const dialRef = useRef<HTMLDivElement>(null);
-  // Start at Neutral, which is index 3 in the reversed array, corresponding to 3/7ths of the circle.
-  const initialAngle = -Math.PI / 2 + (3 / moods.length) * Math.PI * 2;
-  const [angle, setAngle] = useState(initialAngle); 
+  const [angle, setAngle] = useState(-Math.PI / 2); // Start at the top (Neutral)
+
+  useEffect(() => {
+    // Set initial angle for Neutral mood on mount
+    const neutralIndex = moods.findIndex(m => m.name === 'Neutral');
+    const step = (Math.PI * 2) / moods.length;
+    const initialAngle = -Math.PI / 2 + neutralIndex * step;
+    setAngle(initialAngle);
+  }, []);
 
   const selectedMood = useMemo(() => {
     // Normalize angle to be between 0 and 2*PI
-    let normalizedAngle = (angle + Math.PI / 2 + Math.PI * 4) % (Math.PI * 2);
+    const normalizedAngle = (angle + Math.PI / 2 + Math.PI * 4) % (Math.PI * 2);
     const step = (Math.PI * 2) / moods.length;
     // Find the closest mood index
-    let moodIndex = Math.round(normalizedAngle / step);
+    const moodIndex = Math.round(normalizedAngle / step);
     return moods[moodIndex % moods.length];
   }, [angle]);
 
-  const bind = useDrag(({ xy }) => {
+  const bind = useDrag(({ xy, down }) => {
     if (dialRef.current) {
       const { left, top, width, height } = dialRef.current.getBoundingClientRect();
       const centerX = left + width / 2;
@@ -49,7 +56,7 @@ const MoodDial = () => {
     <div className="flex flex-col items-center gap-8">
       <div
         ref={dialRef}
-        className="relative w-80 h-80 rounded-full flex items-center justify-center cursor-pointer"
+        className="relative w-[360px] h-[360px] rounded-full flex items-center justify-center cursor-pointer"
         {...bind()}
         style={{ touchAction: 'none' }}
       >
@@ -66,37 +73,36 @@ const MoodDial = () => {
         )}
         
         {/* The Dial Track */}
-        <div className="absolute w-full h-full border-4 border-primary/20 rounded-full" />
+        <div className="absolute w-[280px] h-[280px] border-4 border-primary/20 rounded-full" />
         
         {/* Mood Labels */}
         {moods.map((mood, index) => {
           const moodAngle = -Math.PI / 2 + (index / moods.length) * Math.PI * 2;
+          const labelX = LABEL_RADIUS * Math.cos(moodAngle);
+          const labelY = LABEL_RADIUS * Math.sin(moodAngle);
           const isSelected = selectedMood?.name === mood.name;
 
           return (
-            <div
+             <div
               key={mood.name}
-              className="absolute w-full h-full"
-              style={{ transform: `rotate(${(moodAngle * 180) / Math.PI}deg)` }}
+              className="absolute w-24 h-10 flex items-center justify-center"
+              style={{
+                left: '50%',
+                top: '50%',
+                transform: `translate(-50%, -50%) translate(${labelX}px, ${labelY}px)`,
+              }}
             >
-              <div
-                className="absolute left-1/2 -translate-x-1/2 w-24 h-10 flex items-center justify-center"
-                style={{
-                  transform: `translateX(8.5rem) rotate(-${(moodAngle * 180) / Math.PI}deg)`,
-                }}
+              <span
+                className={cn(
+                  'text-sm transition-all duration-300 text-center',
+                  isSelected
+                    ? 'font-bold text-foreground scale-110'
+                    : 'text-muted-foreground'
+                )}
+                style={{ color: isSelected ? mood.color : undefined }}
               >
-                <span
-                  className={cn(
-                    'text-sm transition-all duration-300 text-center',
-                    isSelected
-                      ? 'font-bold text-foreground scale-110'
-                      : 'text-muted-foreground'
-                  )}
-                  style={{ color: isSelected ? mood.color : undefined }}
-                >
-                  {mood.name}
-                </span>
-              </div>
+                {mood.name}
+              </span>
             </div>
           );
         })}
@@ -107,7 +113,7 @@ const MoodDial = () => {
           style={{
             width: HANDLE_SIZE,
             height: HANDLE_SIZE,
-            transform: `translate(${handleX}px, ${handleY}px) translate(-50%, -50%)`,
+            transform: `translate(-50%, -50%) translate(${handleX}px, ${handleY}px)`,
             left: '50%',
             top: '50%',
           }}
