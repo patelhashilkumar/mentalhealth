@@ -19,18 +19,14 @@ const HANDLE_SIZE = 24;
 
 const MoodDial = () => {
   const dialRef = useRef<HTMLDivElement>(null);
-  const [angle, setAngle] = useState(-Math.PI / 2 + (3 / (moods.length -1)) * (Math.PI * 2 / moods.length)); // Start at Neutral
+  const [angle, setAngle] = useState(-Math.PI / 2 + (3 / moods.length) * Math.PI * 2); // Start at Neutral
 
   const selectedMood = useMemo(() => {
     let normalizedAngle = (angle + Math.PI / 2 + Math.PI * 2) % (Math.PI * 2);
-    let moodIndex = Math.round((normalizedAngle / (Math.PI * 2)) * (moods.length));
-    moodIndex = (moodIndex + moods.length -1) % moods.length;
-    moodIndex = Math.min(moods.length - 1, Math.max(0, moodIndex));
-    
-    // Reverse the index to match the visual layout
-    const visualIndex = (moods.length - 1 - moodIndex + moods.length) % moods.length;
-
-    return moods[visualIndex];
+    const step = (Math.PI * 2) / moods.length;
+    let moodIndex = Math.round(normalizedAngle / step);
+    moodIndex = moodIndex % moods.length;
+    return moods[moodIndex];
   }, [angle]);
 
   const bind = useDrag(({ xy }) => {
@@ -101,9 +97,6 @@ const MoodDial = () => {
             </div>
           );
         })}
-        
-        {/* Center Dot */}
-        <div className="absolute w-4 h-4 rounded-full bg-primary" />
         
         {/* Draggable Handle */}
         <div
