@@ -11,6 +11,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 const feelings = [
   'Content',
@@ -84,13 +85,8 @@ export default function MoodDetailsPage() {
           <ArrowLeft className="mr-2 h-4 w-4" />
           Mood
         </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => router.push('/')}
-          className="text-muted-foreground"
-        >
-          Cancel
+        <Button asChild variant="ghost" size="sm" className="text-muted-foreground">
+          <Link href="/home">Cancel</Link>
         </Button>
       </header>
       <main className="flex-1 flex flex-col items-center px-4 pt-8">

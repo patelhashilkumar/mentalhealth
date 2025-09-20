@@ -54,7 +54,7 @@ export default function FeedPage() {
       <header className="flex items-center justify-between p-4 border-b shadow-sm">
         <div className="flex items-center">
           <Button asChild variant="ghost" size="icon" className="mr-2">
-            <Link href="/">
+            <Link href="/home">
               <ArrowLeft />
             </Link>
           </Button>
