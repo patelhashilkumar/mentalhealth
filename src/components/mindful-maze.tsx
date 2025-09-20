@@ -15,23 +15,24 @@ const affirmations = [
   'Breathing in, you feel calm. Breathing out, you release tension.',
 ];
 
+// Updated maze layout to match the image
 const initialMaze = [
-  '#######E#',
+  '#########',
+  '#       #',
+  '# ##### #',
+  '# # #   #',
   '# #   # #',
-  '# # ### #',
-  '#   #   #',
-  '##### ###',
-  '#   #   #',
   '# ### # #',
-  '# #   # #',
-  '#S#######',
+  '# #   #E#',
+  '#S  #   #',
+  '#########',
 ];
 
 const CELL_SIZE = 40;
 
 const MindfulMaze = () => {
   const [maze, setMaze] = useState(initialMaze);
-  const [playerPos, setPlayerPos] = useState({ x: 1, y: 8 });
+  const [playerPos, setPlayerPos] = useState({ x: 1, y: 7 }); // Updated start position
   const [isFinished, setIsFinished] = useState(false);
   const [affirmation, setAffirmation] = useState('');
 
@@ -77,7 +78,7 @@ const MindfulMaze = () => {
   };
 
   const restartGame = () => {
-    setPlayerPos({ x: 1, y: 8 });
+    setPlayerPos({ x: 1, y: 7 }); // Reset to start position
     setIsFinished(false);
   };
 
@@ -107,27 +108,28 @@ const MindfulMaze = () => {
             </motion.div>
           )}
         </AnimatePresence>
-        <div className="relative">
+        <div className="relative bg-black">
           {maze.map((row, y) => (
             <div key={y} className="flex">
               {row.split('').map((cell, x) => (
                 <div
                   key={x}
-                  className={cn(
-                    'flex items-center justify-center',
-                    cell === '#' && 'bg-primary/10 rounded-sm'
-                  )}
+                  className="flex items-center justify-center"
                   style={{ width: CELL_SIZE, height: CELL_SIZE }}
                 >
-                  {cell === 'E' && (
-                    <div className="w-6 h-6 rounded-full bg-primary animate-pulse" />
-                  )}
+                  {cell === '#' ? (
+                    <div
+                      className="w-11/12 h-11/12 bg-muted/50 rounded-md"
+                    />
+                  ) : cell === 'E' ? (
+                    <div className="w-6 h-6 rounded-full bg-muted" />
+                  ) : null}
                 </div>
               ))}
             </div>
           ))}
           <motion.div
-            className="absolute top-0 left-0 w-8 h-8 bg-primary rounded-full shadow-lg"
+            className="absolute top-0 left-0 bg-primary rounded-full shadow-lg"
             animate={{
               x: playerPos.x * CELL_SIZE + (CELL_SIZE - 32) / 2,
               y: playerPos.y * CELL_SIZE + (CELL_SIZE - 32) / 2,
@@ -140,8 +142,7 @@ const MindfulMaze = () => {
           />
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-2">
-        <div />
+      <div className="flex flex-col items-center gap-2">
         <Button
           variant="outline"
           className="p-4 h-auto"
@@ -149,28 +150,29 @@ const MindfulMaze = () => {
         >
           <ArrowUp />
         </Button>
-        <div />
-        <Button
-          variant="outline"
-          className="p-4 h-auto"
-          onClick={() => move('left')}
-        >
-          <ArrowLeft />
-        </Button>
-        <Button
-          variant="outline"
-          className="p-4 h-auto"
-          onClick={() => move('down')}
-        >
-          <ArrowDown />
-        </Button>
-        <Button
-          variant="outline"
-          className="p-4 h-auto"
-          onClick={() => move('right')}
-        >
-          <ArrowRight />
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            className="p-4 h-auto"
+            onClick={() => move('left')}
+          >
+            <ArrowLeft />
+          </Button>
+          <Button
+            variant="outline"
+            className="p-4 h-auto"
+            onClick={() => move('down')}
+          >
+            <ArrowDown />
+          </Button>
+          <Button
+            variant="outline"
+            className="p-4 h-auto"
+            onClick={() => move('right')}
+          >
+            <ArrowRight />
+          </Button>
+        </div>
       </div>
     </div>
   );
