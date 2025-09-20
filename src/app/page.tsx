@@ -7,7 +7,7 @@ export default function Home() {
       <header className="flex items-center justify-center p-4 border-b border-white/10 shadow-sm">
         <Stethoscope className="w-8 h-8 mr-3 text-primary" />
         <h1 className="text-2xl font-bold tracking-tight text-foreground font-headline">
-          Gemini Health Consult
+          AI Doc
         </h1>
       </header>
       <main className="flex-1 overflow-hidden">

@@ -166,7 +166,7 @@ export default function ChatInterface() {
           {messages.length === 0 && (
              <div className="text-center text-muted-foreground py-20">
               <HeartPulse className="w-12 h-12 mx-auto mb-4 text-primary/50" />
-              <p className="text-lg font-medium">Welcome to Gemini Health Consult</p>
+              <p className="text-lg font-medium">Welcome to AI Doc</p>
               <p className="text-sm">Describe your symptoms to get started.</p>
             </div>
           )}

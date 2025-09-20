@@ -4,8 +4,8 @@ import { cn } from '@/lib/utils';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Gemini Health Consult',
-  description: 'A clean, simple medical AI consultation platform.',
+  title: 'AI Doc',
+  description: 'Your personal AI health assistant.',
 };
 
 export default function RootLayout({
