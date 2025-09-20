@@ -137,12 +137,12 @@ export default function ChatInterface() {
                   <p className="whitespace-pre-wrap text-sm">{message.content}</p>
                 ) : (
                   <div className="space-y-4">
-                    <Table>
+                    <Table className="table-auto">
                       <TableHeader>
                         <TableRow>
-                          <TableHead className="w-1/4">Condition</TableHead>
-                          <TableHead className="w-1/2">Description (Key Symptoms)</TableHead>
-                          <TableHead className="w-1/4">Advice</TableHead>
+                          <TableHead>Condition</TableHead>
+                          <TableHead>Description (Key Symptoms)</TableHead>
+                          <TableHead>Advice</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
