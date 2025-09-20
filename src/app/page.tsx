@@ -1,6 +1,12 @@
 'use client';
 
-import { Stethoscope, BookHeart, Smile, Newspaper } from 'lucide-react';
+import {
+  Stethoscope,
+  BookHeart,
+  Smile,
+  Newspaper,
+  Gamepad2,
+} from 'lucide-react';
 import Link from 'next/link';
 
 export default function Dashboard() {
@@ -15,7 +21,7 @@ export default function Dashboard() {
         </div>
       </header>
       <main className="flex-1 p-6">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           <FeatureCard
             title="AI Doc"
             description="Your personal AI health assistant."
@@ -33,6 +39,12 @@ export default function Dashboard() {
             description="Discover content and connect with others."
             href="/feed"
             icon={<Newspaper className="w-8 h-8 text-primary" />}
+          />
+          <FeatureCard
+            title="Games"
+            description="Play games to relax and unwind."
+            href="/games"
+            icon={<Gamepad2 className="w-8 h-8 text-primary" />}
           />
         </div>
       </main>
@@ -71,9 +83,5 @@ function FeatureCard({
     return content;
   }
 
-  return (
-    <Link href={href}>
-      {content}
-    </Link>
-  );
+  return <Link href={href}>{content}</Link>;
 }
