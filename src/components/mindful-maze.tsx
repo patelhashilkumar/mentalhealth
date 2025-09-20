@@ -15,24 +15,13 @@ const affirmations = [
   'Breathing in, you feel calm. Breathing out, you release tension.',
 ];
 
-// Updated maze layout to match the image
-const initialMaze = [
-  '#########',
-  '#       #',
-  '# ##### #',
-  '# # #   #',
-  '# #   # #',
-  '# ### # #',
-  '# #   #E#',
-  '#S  #   #',
-  '#########',
-];
-
+const BOARD_WIDTH = 9;
+const BOARD_HEIGHT = 9;
 const CELL_SIZE = 40;
 
 const MindfulMaze = () => {
-  const [maze, setMaze] = useState(initialMaze);
-  const [playerPos, setPlayerPos] = useState({ x: 1, y: 7 }); // Updated start position
+  const [playerPos, setPlayerPos] = useState({ x: 1, y: 7 });
+  const [goalPos] = useState({ x: 7, y: 6 });
   const [isFinished, setIsFinished] = useState(false);
   const [affirmation, setAffirmation] = useState('');
 
@@ -42,11 +31,12 @@ const MindfulMaze = () => {
   const arrowRight = useKeyPress('ArrowRight');
 
   useEffect(() => {
+    if (isFinished) return;
     if (arrowUp) move('up');
     if (arrowDown) move('down');
     if (arrowLeft) move('left');
     if (arrowRight) move('right');
-  }, [arrowUp, arrowDown, arrowLeft, arrowRight]);
+  }, [arrowUp, arrowDown, arrowLeft, arrowRight, isFinished]);
 
   const move = (direction: 'up' | 'down' | 'left' | 'right') => {
     if (isFinished) return;
@@ -57,17 +47,17 @@ const MindfulMaze = () => {
       if (direction === 'left') newPos.x--;
       if (direction === 'right') newPos.x++;
 
+      // Wall collision check
       if (
         newPos.y < 0 ||
-        newPos.y >= maze.length ||
+        newPos.y >= BOARD_HEIGHT ||
         newPos.x < 0 ||
-        newPos.x >= maze[0].length ||
-        maze[newPos.y][newPos.x] === '#'
+        newPos.x >= BOARD_WIDTH
       ) {
         return prevPos;
       }
 
-      if (maze[newPos.y][newPos.x] === 'E') {
+      if (newPos.x === goalPos.x && newPos.y === goalPos.y) {
         setIsFinished(true);
         setAffirmation(
           affirmations[Math.floor(Math.random() * affirmations.length)]
@@ -78,7 +68,7 @@ const MindfulMaze = () => {
   };
 
   const restartGame = () => {
-    setPlayerPos({ x: 1, y: 7 }); // Reset to start position
+    setPlayerPos({ x: 1, y: 7 });
     setIsFinished(false);
   };
 
@@ -90,8 +80,8 @@ const MindfulMaze = () => {
       <div
         className="relative bg-card p-2 rounded-lg shadow-inner"
         style={{
-          width: CELL_SIZE * maze[0].length + 4,
-          height: CELL_SIZE * maze.length + 4,
+          width: CELL_SIZE * BOARD_WIDTH + 4,
+          height: CELL_SIZE * BOARD_HEIGHT + 4,
         }}
       >
         <AnimatePresence>
@@ -108,28 +98,27 @@ const MindfulMaze = () => {
             </motion.div>
           )}
         </AnimatePresence>
-        <div className="relative bg-black">
-          {maze.map((row, y) => (
-            <div key={y} className="flex">
-              {row.split('').map((cell, x) => (
-                <div
-                  key={x}
-                  className="flex items-center justify-center"
-                  style={{ width: CELL_SIZE, height: CELL_SIZE }}
-                >
-                  {cell === '#' ? (
-                    <div
-                      className="w-11/12 h-11/12 bg-muted/50 rounded-md"
-                    />
-                  ) : cell === 'E' ? (
-                    <div className="w-6 h-6 rounded-full bg-muted" />
-                  ) : null}
-                </div>
-              ))}
-            </div>
-          ))}
+        <div
+          className="relative bg-black rounded-md"
+          style={{
+            width: '100%',
+            height: '100%',
+          }}
+        >
+          {/* Goal */}
+          <div
+            className="absolute bg-muted rounded-full"
+            style={{
+              width: 32,
+              height: 32,
+              left: goalPos.x * CELL_SIZE + (CELL_SIZE - 32) / 2,
+              top: goalPos.y * CELL_SIZE + (CELL_SIZE - 32) / 2,
+            }}
+          />
+
+          {/* Player */}
           <motion.div
-            className="absolute top-0 left-0 bg-primary rounded-full shadow-lg"
+            className="absolute bg-primary rounded-full shadow-lg"
             animate={{
               x: playerPos.x * CELL_SIZE + (CELL_SIZE - 32) / 2,
               y: playerPos.y * CELL_SIZE + (CELL_SIZE - 32) / 2,
