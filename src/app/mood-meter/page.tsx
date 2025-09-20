@@ -1,7 +1,8 @@
 'use client';
-import { Smile, ArrowLeft } from 'lucide-react';
+import { BookHeart, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import MoodDial from '@/components/mood-dial';
 
 export default function MoodMeterPage() {
   return (
@@ -13,20 +14,20 @@ export default function MoodMeterPage() {
               <ArrowLeft />
             </Link>
           </Button>
-          <Smile className="w-8 h-8 mr-3 text-primary" />
+          <BookHeart className="w-8 h-8 mr-3 text-primary" />
           <h1 className="text-2xl font-bold tracking-tight text-foreground font-headline">
-            Mood Meter
+            State of Mind
           </h1>
         </div>
       </header>
-      <main className="flex-1 p-6 text-center">
-        <div className="py-20">
-          <Smile className="w-16 h-16 mx-auto mb-4 text-primary/50" />
-          <h2 className="text-2xl font-bold text-foreground">Log Your Mood</h2>
-          <p className="text-muted-foreground">
-            This is where the mood logging interface will be.
-          </p>
-        </div>
+      <main className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+        <h2 className="text-3xl font-bold text-foreground mb-4 font-headline">
+          How are you feeling?
+        </h2>
+        <p className="text-muted-foreground mb-12">
+          Select the mood that best describes your current state.
+        </p>
+        <MoodDial />
       </main>
     </div>
   );
