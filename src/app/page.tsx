@@ -1,29 +1,8 @@
 'use client';
-import { Stethoscope, LogOut } from 'lucide-react';
+import { Stethoscope } from 'lucide-react';
 import ChatInterface from '@/components/chat-interface';
-import { useAuth } from '@/hooks/use-auth';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { useEffect } from 'react';
 
 export default function Home() {
-  const { user, loading, logout } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!loading && !user) {
-      router.replace('/login');
-    }
-  }, [user, loading, router]);
-
-  if (loading || !user) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p>Loading...</p>
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col h-screen bg-background/80 backdrop-blur-xl">
       <header className="flex items-center justify-between p-4 border-b border-white/10 shadow-sm">
@@ -33,10 +12,6 @@ export default function Home() {
             AI Doc
           </h1>
         </div>
-        <Button variant="ghost" onClick={logout}>
-          <LogOut className="mr-2" />
-          Logout
-        </Button>
       </header>
       <main className="flex-1 overflow-hidden">
         <ChatInterface />
