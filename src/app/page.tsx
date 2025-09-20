@@ -41,7 +41,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 max-w-4xl w-full">
           {features.map((feature) => (
             <Link key={feature.title} href={feature.href} passHref>
-              <Card className="flex flex-col h-full transition-all duration-300 transform hover:scale-105 hover:shadow-primary/20 bg-card/50 backdrop-blur-xl">
+              <Card className="flex flex-col h-full transition-all duration-300 transform hover:scale-105 hover:shadow-primary/20 bg-card/50 backdrop-blur-xl hover:border-primary/50">
                 <CardHeader className="flex-row items-center gap-4">
                   <feature.icon className="w-8 h-8 text-primary" />
                   <CardTitle className="text-xl font-bold font-headline">
@@ -58,7 +58,7 @@ export default function Dashboard() {
 
         <div className="mt-12">
           <Link href="/mood-meter">
-            <button className="px-8 py-3 text-lg font-semibold text-primary-foreground bg-primary rounded-full shadow-lg hover:bg-primary/90 transition-all duration-300 transform hover:scale-110">
+            <button className="px-8 py-3 text-lg font-semibold text-primary-foreground bg-primary rounded-full shadow-lg shadow-primary/30 hover:bg-primary/90 transition-all duration-300 transform hover:scale-110">
               How are you feeling today?
             </button>
           </Link>

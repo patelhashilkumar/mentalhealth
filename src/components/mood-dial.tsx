@@ -163,13 +163,7 @@ const MoodDial = () => {
         disabled={!selectedMood}
         size="lg"
         onClick={handleLogMood}
-        className="transition-colors rounded-full px-12 text-lg"
-        style={{
-          backgroundColor: selectedMood
-            ? 'hsl(var(--primary))'
-            : 'hsl(var(--muted))',
-          color: 'hsl(var(--primary-foreground))',
-        }}
+        className="transition-colors rounded-full px-12 text-lg shadow-lg shadow-primary/20"
       >
         Log Mood
       </Button>
