@@ -124,10 +124,10 @@ export default function ChatInterface() {
               )}
               <div
                 className={cn(
-                  'max-w-md lg:max-w-2xl p-4 rounded-2xl text-foreground w-full',
+                  'p-4 rounded-2xl text-foreground w-full',
                   message.role === 'user'
                     ? 'bg-primary/20 rounded-br-none max-w-md'
-                    : 'bg-card/60 backdrop-blur-sm border border-border/50 rounded-bl-none',
+                    : 'bg-card/60 backdrop-blur-sm border border-border/50 rounded-bl-none max-w-4xl',
                   message.role === 'loading' && 'p-4 max-w-md'
                 )}
               >
