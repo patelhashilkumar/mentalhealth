@@ -66,21 +66,10 @@ const MoodDial = () => {
     <div className="flex flex-col items-center gap-8">
       <div
         ref={dialRef}
-        className="relative w-[360px] h-[360px] rounded-full flex items-center justify-center cursor-pointer bg-white/10 backdrop-blur-xl border border-white/20"
+        className="relative w-[360px] h-[360px] rounded-full flex items-center justify-center cursor-pointer bg-card border"
         {...bind()}
         style={{ touchAction: 'none' }}
       >
-        {selectedMood && (
-          <div
-            className="absolute w-full h-full rounded-full transition-all duration-300"
-            style={{
-              background: `radial-gradient(circle, ${selectedMood.color} -20%, transparent 60%)`,
-              opacity: 0.3,
-              transform: 'scale(1.2)',
-            }}
-          />
-        )}
-
         <div className="absolute w-[280px] h-[280px] border-4 border-primary/20 rounded-full" />
 
         {moods.map((mood, index) => {
@@ -130,8 +119,7 @@ const MoodDial = () => {
         {selectedMood && (
           <div className="text-center">
             <p
-              className="text-2xl font-bold"
-              style={{ color: selectedMood.color }}
+              className="text-2xl font-bold text-primary"
             >
               {selectedMood.name}
             </p>

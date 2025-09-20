@@ -50,8 +50,8 @@ const feedItems = [
 
 export default function FeedPage() {
   return (
-    <div className="flex flex-col h-screen">
-      <header className="flex items-center justify-between p-4 bg-transparent border-b border-white/10 shadow-sm">
+    <div className="flex flex-col h-screen bg-background">
+      <header className="flex items-center justify-between p-4 border-b shadow-sm">
         <div className="flex items-center">
           <Button asChild variant="ghost" size="icon" className="mr-2">
             <Link href="/">
@@ -70,7 +70,7 @@ export default function FeedPage() {
             {feedItems.map((item) => (
               <div
                 key={item.id}
-                className="flex flex-col overflow-hidden transition-all duration-300 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-lg hover:scale-105 hover:shadow-primary/20"
+                className="flex flex-col overflow-hidden transition-all duration-300 bg-card border rounded-lg shadow-sm hover:scale-105 hover:shadow-primary/20"
               >
                 <div className="relative w-full h-48">
                   <Image

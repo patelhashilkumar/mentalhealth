@@ -117,17 +117,17 @@ export default function ChatInterface() {
             >
               {message.role !== 'user' && (
                 <Avatar className="w-9 h-9 border border-border">
-                  <AvatarFallback className="bg-transparent">
-                    <HeartPulse className="w-5 h-5 text-primary" />
+                  <AvatarFallback className="bg-transparent text-primary">
+                    <HeartPulse className="w-5 h-5" />
                   </AvatarFallback>
                 </Avatar>
               )}
               <div
                 className={cn(
-                  'p-4 rounded-2xl text-foreground w-full shadow-md',
-                  'bg-white/10 backdrop-blur-xl border border-white/20',
+                  'p-4 rounded-lg text-foreground w-full shadow-md',
+                  'bg-card border',
                   message.role === 'user'
-                    ? 'rounded-br-none max-w-md'
+                    ? 'bg-primary text-primary-foreground rounded-br-none max-w-md'
                     : 'rounded-bl-none max-w-4xl',
                   message.role === 'loading' && 'p-4 max-w-md'
                 )}
@@ -152,7 +152,7 @@ export default function ChatInterface() {
                         {(
                           message.content as AIHealthConsultationOutput
                         ).recommendations.map((rec, index) => (
-                          <TableRow key={index} className="border-white/10">
+                          <TableRow key={index} className="border-border">
                             <TableCell className="font-medium">
                               {rec.condition}
                             </TableCell>
@@ -167,7 +167,7 @@ export default function ChatInterface() {
               </div>
               {message.role === 'user' && (
                 <Avatar className="w-9 h-9 border">
-                  <AvatarFallback className="bg-transparent">
+                  <AvatarFallback className="bg-secondary">
                     <User className="w-5 h-5" />
                   </AvatarFallback>
                 </Avatar>
@@ -186,7 +186,7 @@ export default function ChatInterface() {
         </div>
       </ScrollArea>
       <div className="p-4 bg-transparent">
-        <div className="p-2 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg">
+        <div className="p-2 rounded-lg bg-card border shadow-lg">
           <form onSubmit={handleSubmit} className="flex items-end gap-2">
             <Textarea
               ref={textareaRef}

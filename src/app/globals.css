@@ -4,26 +4,26 @@
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 330 80% 60%;
-    --primary-foreground: 330 80% 98%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --background: 48 83% 97%;
+    --foreground: 240 10% 3.9%;
+    --card: 48 83% 97%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 48 83% 97%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 0 84% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 48 96% 89%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 100% / 0.1;
-    --input: 240 3.7% 15.9%;
-    --ring: 330 80% 65%;
-    --radius: 0.8rem;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 0 84% 60%;
+    --radius: 0.5rem;
   }
 
   .dark {
@@ -33,19 +33,19 @@
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 330 80% 60%;
-    --primary-foreground: 330 80% 98%;
+    --primary: 0 84% 60%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
+    --accent: 48 96% 89%;
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 100% / 0.1;
+    --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 330 80% 65%;
+    --ring: 0 84% 65%;
   }
 }
 
@@ -55,24 +55,5 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-image: linear-gradient(120deg, #fbc2eb 0%, #a6c1ee 100%);
-    min-height: 100svh;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: radial-gradient(
-        circle at 10% 20%,
-        rgba(255, 192, 203, 0.4) 0%,
-        transparent 40%
-      ),
-      radial-gradient(
-        circle at 90% 80%,
-        rgba(173, 216, 230, 0.4) 0%,
-        transparent 40%
-      );
-    z-index: -1;
   }
 }
