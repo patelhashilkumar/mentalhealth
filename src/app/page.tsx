@@ -9,14 +9,43 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useMood } from '@/context/mood-context';
 import DailyMood from '@/components/daily-mood';
+import { getAiMoodInsight } from './actions';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function StateOfMindPage() {
   const { mood } = useMood();
   const [today, setToday] = useState('');
+  const [insight, setInsight] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setToday(format(new Date(), 'd LLL'));
   }, []);
+
+  useEffect(() => {
+    async function fetchInsight() {
+      if (mood) {
+        setIsLoading(true);
+        setInsight('');
+        try {
+          const result = await getAiMoodInsight(mood.name);
+          setInsight(result.insight);
+        } catch (error) {
+          console.error(error);
+          setInsight(
+            'Could not load insight. State of Mind refers to your momentary emotions or daily moods. Keeping a log of your momentary emotions and daily moods can help you understand yourself better.'
+          );
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setInsight(
+          'State of Mind refers to your momentary emotions or daily moods. Keeping a log of your momentary emotions and daily moods can help you understand yourself better.'
+        );
+      }
+    }
+    fetchInsight();
+  }, [mood]);
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -36,7 +65,10 @@ export default function StateOfMindPage() {
       <main className="flex-1 flex-col items-center p-4">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold">Today, {today}</h2>
-          <Button asChild className="rounded-full bg-blue-500 hover:bg-blue-600 text-white">
+          <Button
+            asChild
+            className="rounded-full bg-blue-500 hover:bg-blue-600 text-white"
+          >
             <Link href="/mood-meter">Log</Link>
           </Button>
         </div>
@@ -75,11 +107,14 @@ export default function StateOfMindPage() {
 
         <div className="mt-6">
           <h3 className="text-lg font-semibold mb-2">About State of Mind</h3>
-          <p className="text-muted-foreground text-sm">
-            State of Mind refers to your momentary emotions or daily moods.
-            Keeping a log of your momentary emotions and daily moods can
-            help you understand yourself better.
-          </p>
+          {isLoading ? (
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-2/3" />
+            </div>
+          ) : (
+            <p className="text-muted-foreground text-sm">{insight}</p>
+          )}
         </div>
       </main>
     </div>
