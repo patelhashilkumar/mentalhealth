@@ -54,13 +54,17 @@ const MAZE_WIDTH = 15;
 const MAZE_HEIGHT = 15;
 
 const MindfulMaze: React.FC = () => {
-  const [maze, setMaze] = useState(generateMaze(MAZE_WIDTH, MAZE_HEIGHT));
+  const [maze, setMaze] = useState<number[][]>([]);
   const [playerPos, setPlayerPos] = useState({ x: 0, y: 0 });
   const [isFinished, setIsFinished] = useState(false);
 
+  useEffect(() => {
+    setMaze(generateMaze(MAZE_WIDTH, MAZE_HEIGHT));
+  }, []);
+
   const movePlayer = useCallback(
     (dx: number, dy: number) => {
-      if (isFinished) return;
+      if (isFinished || maze.length === 0) return;
       const newX = playerPos.x + dx;
       const newY = playerPos.y + dy;
 
@@ -112,7 +116,12 @@ const MindfulMaze: React.FC = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [movePlayer]);
+  }, [movePlayer, restartGame]);
+
+
+  if (maze.length === 0) {
+    return <div>Loading Maze...</div>;
+  }
 
   return (
     <div className="flex flex-col items-center gap-4">
