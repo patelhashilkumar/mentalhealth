@@ -50,7 +50,7 @@ export default function StateOfMindPage() {
           <CardContent className="flex flex-col items-center justify-center gap-6 pt-6 pb-12">
             <DailyMood mood={mood} />
             <h3 className="text-2xl font-medium">
-              {mood ? `A ${mood.name} Day` : 'No mood logged'}
+              {mood ? `A ${mood.name} Day ${mood.emoji}` : 'No mood logged'}
             </h3>
           </CardContent>
         </Card>
