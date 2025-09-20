@@ -5,8 +5,8 @@ import Link from 'next/link';
 
 export default function Dashboard() {
   return (
-    <div className="flex flex-col h-screen bg-background/80 backdrop-blur-xl">
-      <header className="flex items-center justify-between p-4 border-b border-white/10 shadow-sm">
+    <div className="flex flex-col h-screen">
+      <header className="flex items-center justify-between p-4 bg-background/80 backdrop-blur-sm border-b border-white/20 shadow-sm">
         <div className="flex items-center">
           <BookHeart className="w-8 h-8 mr-3 text-primary" />
           <h1 className="text-2xl font-bold tracking-tight text-foreground font-headline">
@@ -56,10 +56,10 @@ function FeatureCard({
 }) {
   const content = (
     <div
-      className={`flex flex-col items-center justify-center p-6 text-center transition-all duration-300 bg-card/60 backdrop-blur-sm border border-border/50 rounded-2xl ${
+      className={`flex flex-col items-center justify-center p-6 text-center transition-all duration-300 bg-background/60 backdrop-blur-sm border border-white/30 rounded-2xl shadow-lg ${
         disabled
           ? 'opacity-50 cursor-not-allowed'
-          : 'hover:bg-primary/20 hover:scale-105'
+          : 'hover:bg-primary/10 hover:scale-105'
       }`}
     >
       <div className="p-4 mb-4 bg-primary/10 rounded-full">{icon}</div>

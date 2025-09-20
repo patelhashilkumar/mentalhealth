@@ -66,7 +66,7 @@ const MoodDial = () => {
             className="absolute w-full h-full rounded-full transition-all duration-300"
             style={{
               background: `radial-gradient(circle, ${selectedMood.color} -20%, transparent 60%)`,
-              opacity: 0.5,
+              opacity: 0.3,
               transform: 'scale(1.2)',
             }}
           />
@@ -99,7 +99,6 @@ const MoodDial = () => {
                     ? 'font-bold text-foreground scale-110'
                     : 'text-muted-foreground'
                 )}
-                style={{ color: isSelected ? mood.color : undefined }}
               >
                 {mood.name}
               </span>

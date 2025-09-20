@@ -117,17 +117,17 @@ export default function ChatInterface() {
             >
               {message.role !== 'user' && (
                 <Avatar className="w-9 h-9 border border-border">
-                  <AvatarFallback>
+                  <AvatarFallback className="bg-transparent">
                     <HeartPulse className="w-5 h-5 text-primary" />
                   </AvatarFallback>
                 </Avatar>
               )}
               <div
                 className={cn(
-                  'p-4 rounded-2xl text-foreground w-full',
+                  'p-4 rounded-2xl text-foreground w-full shadow-md',
                   message.role === 'user'
                     ? 'bg-primary/20 rounded-br-none max-w-md'
-                    : 'bg-card/60 backdrop-blur-sm border border-border/50 rounded-bl-none max-w-4xl',
+                    : 'bg-background/60 backdrop-blur-sm border border-white/30 rounded-bl-none max-w-4xl',
                   message.role === 'loading' && 'p-4 max-w-md'
                 )}
               >
@@ -151,7 +151,7 @@ export default function ChatInterface() {
                         {(
                           message.content as AIHealthConsultationOutput
                         ).recommendations.map((rec, index) => (
-                          <TableRow key={index}>
+                          <TableRow key={index} className="border-white/20">
                             <TableCell className="font-medium">
                               {rec.condition}
                             </TableCell>
@@ -166,7 +166,7 @@ export default function ChatInterface() {
               </div>
               {message.role === 'user' && (
                 <Avatar className="w-9 h-9 border">
-                  <AvatarFallback>
+                  <AvatarFallback className="bg-transparent">
                     <User className="w-5 h-5" />
                   </AvatarFallback>
                 </Avatar>
@@ -185,7 +185,7 @@ export default function ChatInterface() {
         </div>
       </ScrollArea>
       <div className="p-4 bg-transparent">
-        <div className="p-2 rounded-2xl bg-card/60 backdrop-blur-sm border border-border/50 shadow-sm">
+        <div className="p-2 rounded-2xl bg-background/60 backdrop-blur-sm border border-white/30 shadow-lg">
           <form onSubmit={handleSubmit} className="flex items-end gap-2">
             <Textarea
               ref={textareaRef}

@@ -7,8 +7,8 @@ import { ArrowLeft } from 'lucide-react';
 
 export default function AiDocPage() {
   return (
-    <div className="flex flex-col h-screen bg-background/80 backdrop-blur-xl">
-      <header className="flex items-center justify-between p-4 border-b border-white/10 shadow-sm">
+    <div className="flex flex-col h-screen">
+      <header className="flex items-center justify-between p-4 bg-background/80 backdrop-blur-sm border-b border-white/20 shadow-sm">
         <div className="flex items-center">
           <Button asChild variant="ghost" size="icon" className="mr-2">
             <Link href="/">
