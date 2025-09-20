@@ -5,9 +5,9 @@ import { Button } from '@/components/ui/button';
 
 const features = [
   {
-    title: 'State of Mind',
-    description: 'Log and reflect on your mood and emotions.',
-    href: '/state-of-mind',
+    title: 'Mood Section',
+    description: 'Log and reflect on your mood.',
+    href: '/mood-meter',
     icon: <BookHeart className="w-8 h-8 text-primary" />,
   },
   {

@@ -10,13 +10,13 @@ export default function MoodMeterPage() {
       <header className="flex items-center justify-between p-4 border-b border-border/10 shadow-sm">
         <div className="flex items-center">
           <Button asChild variant="ghost" size="icon" className="mr-2">
-            <Link href="/state-of-mind">
+            <Link href="/home">
               <ArrowLeft />
             </Link>
           </Button>
           <BookHeart className="w-8 h-8 mr-3 text-primary" />
           <h1 className="text-2xl font-bold tracking-tight text-foreground font-headline">
-            State of Mind
+            Mood Section
           </h1>
         </div>
       </header>

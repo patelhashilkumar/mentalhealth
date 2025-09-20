@@ -75,8 +75,8 @@ export default function MoodImpactPage() {
 
   const handleDone = () => {
     // Here you would typically save the full mood entry
-    // For now, we just navigate home.
-    router.push('/home');
+    // For now, we just navigate to the summary page.
+    router.push('/state-of-mind');
   };
 
   return (
