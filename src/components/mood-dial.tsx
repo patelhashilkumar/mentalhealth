@@ -12,21 +12,24 @@ const moods = [
   { name: 'Slightly Unpleasant', color: 'hsl(30, 100%, 75%)', value: 1 },
   { name: 'Unpleasant', color: 'hsl(0, 100%, 75%)', value: 0 },
   { name: 'Very Unpleasant', color: 'hsl(0, 100%, 60%)', value: -1 },
-];
+].reverse();
 
 const DIAL_RADIUS = 140;
 const HANDLE_SIZE = 24;
 
 const MoodDial = () => {
   const dialRef = useRef<HTMLDivElement>(null);
-  const [angle, setAngle] = useState(-Math.PI / 2 + (3 / moods.length) * Math.PI * 2); // Start at Neutral
+  // Start at Neutral, which is index 3 in the reversed array, corresponding to 3/7ths of the circle.
+  const initialAngle = -Math.PI / 2 + (3 / moods.length) * Math.PI * 2;
+  const [angle, setAngle] = useState(initialAngle); 
 
   const selectedMood = useMemo(() => {
-    let normalizedAngle = (angle + Math.PI / 2 + Math.PI * 2) % (Math.PI * 2);
+    // Normalize angle to be between 0 and 2*PI
+    let normalizedAngle = (angle + Math.PI / 2 + Math.PI * 4) % (Math.PI * 2);
     const step = (Math.PI * 2) / moods.length;
+    // Find the closest mood index
     let moodIndex = Math.round(normalizedAngle / step);
-    moodIndex = moodIndex % moods.length;
-    return moods[moodIndex];
+    return moods[moodIndex % moods.length];
   }, [angle]);
 
   const bind = useDrag(({ xy }) => {
