@@ -137,24 +137,26 @@ export default function ChatInterface() {
                   <p className="whitespace-pre-wrap text-sm">{message.content}</p>
                 ) : (
                   <div className="space-y-4">
-                    {(message.content as AIHealthConsultationOutput).recommendations.map((rec, index) => (
-                      <Table key={index}>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell className="font-medium w-1/3">Condition</TableCell>
-                            <TableCell>{rec.condition}</TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell className="font-medium">Description</TableCell>
-                            <TableCell>{rec.description}</TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell className="font-medium">Advice</TableCell>
-                            <TableCell>{rec.advice}</TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    ))}
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="w-1/4">Condition</TableHead>
+                          <TableHead className="w-1/2">Description (Key Symptoms)</TableHead>
+                          <TableHead className="w-1/4">Advice</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {(message.content as AIHealthConsultationOutput).recommendations.map(
+                          (rec, index) => (
+                            <TableRow key={index}>
+                              <TableCell className="font-medium">{rec.condition}</TableCell>
+                              <TableCell>{rec.description}</TableCell>
+                              <TableCell>{rec.advice}</TableCell>
+                            </TableRow>
+                          )
+                        )}
+                      </TableBody>
+                    </Table>
                     <p className="text-xs text-muted-foreground mt-4">
                       {(message.content as AIHealthConsultationOutput).disclaimer}
                     </p>
