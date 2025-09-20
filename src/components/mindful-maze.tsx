@@ -5,7 +5,7 @@ import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight, RefreshCw } from 'lucide-rea
 import { Card, CardContent } from './ui/card';
 import { cn } from '@/lib/utils';
 
-// Maze generation using recursive backtracking
+// Maze generation using iterative backtracking
 const generateMaze = (width: number, height: number) => {
   const maze = Array(height)
     .fill(0)
@@ -13,16 +13,18 @@ const generateMaze = (width: number, height: number) => {
   const stack = [[0, 0]];
   maze[0][0] = 0;
 
-  const carve = (cx: number, cy: number) => {
+  while (stack.length > 0) {
+    const [cx, cy] = stack[stack.length - 1];
+
     const directions = [
       [1, 0], // right
       [-1, 0], // left
       [0, 1], // down
       [0, -1], // up
     ];
-    // Randomize directions
     directions.sort(() => Math.random() - 0.5);
 
+    let carved = false;
     for (const [dx, dy] of directions) {
       const nx = cx + dx * 2;
       const ny = cy + dy * 2;
@@ -31,12 +33,15 @@ const generateMaze = (width: number, height: number) => {
         maze[cy + dy][cx + dx] = 0;
         maze[ny][nx] = 0;
         stack.push([nx, ny]);
-        carve(nx, ny);
+        carved = true;
+        break;
       }
     }
-  };
-  
-  carve(0, 0);
+
+    if (!carved) {
+      stack.pop();
+    }
+  }
 
   // Set entrance and exit
   maze[0][0] = 2; // Player start
@@ -95,6 +100,10 @@ const MindfulMaze: React.FC = () => {
           break;
         case 'ArrowRight':
           movePlayer(1, 0);
+          break;
+        case 'r':
+        case 'R':
+          restartGame();
           break;
       }
     };
