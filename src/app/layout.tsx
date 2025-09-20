@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import './globals.css';
+import { MoodProvider } from '@/context/mood-context';
+import MoodMonitor from '@/components/mood-monitor';
 
 export const metadata: Metadata = {
   title: 'AI Doc',
@@ -28,8 +30,11 @@ export default function RootLayout({
         />
       </head>
       <body className={cn('font-body antialiased')}>
-        {children}
-        <Toaster />
+        <MoodProvider>
+          {children}
+          <MoodMonitor />
+          <Toaster />
+        </MoodProvider>
       </body>
     </html>
   );

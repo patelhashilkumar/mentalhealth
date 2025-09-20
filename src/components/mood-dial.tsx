@@ -4,13 +4,24 @@ import { useDrag } from '@use-gesture/react';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useMood } from '@/context/mood-context';
 
 const moods = [
   { name: 'Very Unpleasant', emoji: '😠', color: 'hsl(0, 84%, 60%)', value: 0 },
   { name: 'Unpleasant', emoji: '😟', color: 'hsl(30, 84%, 60%)', value: 1 },
-  { name: 'Slightly Unpleasant', emoji: '😕', color: 'hsl(60, 84%, 60%)', value: 2 },
+  {
+    name: 'Slightly Unpleasant',
+    emoji: '😕',
+    color: 'hsl(60, 84%, 60%)',
+    value: 2,
+  },
   { name: 'Neutral', emoji: '😐', color: 'hsl(240, 5%, 65%)', value: 3 },
-  { name: 'Slightly Pleasant', emoji: '🙂', color: 'hsl(120, 60%, 65%)', value: 4 },
+  {
+    name: 'Slightly Pleasant',
+    emoji: '🙂',
+    color: 'hsl(120, 60%, 65%)',
+    value: 4,
+  },
   { name: 'Pleasant', emoji: '😊', color: 'hsl(140, 60%, 60%)', value: 5 },
   { name: 'Very Pleasant', emoji: '😄', color: 'hsl(160, 80%, 60%)', value: 6 },
 ];
@@ -23,6 +34,7 @@ const MoodDial = () => {
   const dialRef = useRef<HTMLDivElement>(null);
   const [angle, setAngle] = useState(0);
   const { toast } = useToast();
+  const { setMoodEmoji } = useMood();
 
   useEffect(() => {
     const neutralIndex = moods.findIndex(m => m.name === 'Neutral');
@@ -52,6 +64,7 @@ const MoodDial = () => {
 
   const handleLogMood = () => {
     if (selectedMood) {
+      setMoodEmoji(selectedMood.emoji);
       toast({
         title: 'Mood Logged!',
         description: `You're feeling: ${selectedMood.name} ${selectedMood.emoji}`,
@@ -71,7 +84,7 @@ const MoodDial = () => {
         style={{ touchAction: 'none' }}
       >
         <div className="absolute w-full h-full border-8 border-card rounded-full shadow-inner" />
-        
+
         {moods.map((mood, index) => {
           const numMoods = moods.length;
           const moodAngle = -Math.PI / 2 + (index / numMoods) * (2 * Math.PI);
@@ -92,9 +105,7 @@ const MoodDial = () => {
               <span
                 className={cn(
                   'text-4xl transition-all duration-300 text-center',
-                  isSelected
-                    ? 'scale-125'
-                    : 'opacity-50 scale-90'
+                  isSelected ? 'scale-125' : 'opacity-50 scale-90'
                 )}
               >
                 {mood.emoji}
@@ -104,7 +115,12 @@ const MoodDial = () => {
         })}
 
         <div className="absolute w-[220px] h-[220px] bg-background rounded-full flex items-center justify-center shadow-lg">
-           <span className="text-8xl transition-transform duration-300 ease-in-out" style={{transform: `scale(${selectedMood ? 1 : 0.5})`}}>{selectedMood?.emoji}</span>
+          <span
+            className="text-8xl transition-transform duration-300 ease-in-out"
+            style={{ transform: `scale(${selectedMood ? 1 : 0.5})` }}
+          >
+            {selectedMood?.emoji}
+          </span>
         </div>
 
         <div
