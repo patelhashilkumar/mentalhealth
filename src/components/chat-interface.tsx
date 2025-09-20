@@ -137,12 +137,12 @@ export default function ChatInterface() {
                   <p className="whitespace-pre-wrap text-sm">{message.content}</p>
                 ) : (
                   <div className="space-y-4">
-                    <Table className="table-auto">
+                    <Table className="table-auto w-full">
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Condition</TableHead>
-                          <TableHead>Description (Key Symptoms)</TableHead>
-                          <TableHead>Advice</TableHead>
+                          <TableHead className="w-[25%]">Condition</TableHead>
+                          <TableHead className="w-[45%]">Description (Key Symptoms)</TableHead>
+                          <TableHead className="w-[30%]">Advice</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -157,9 +157,6 @@ export default function ChatInterface() {
                         )}
                       </TableBody>
                     </Table>
-                    <p className="text-xs text-muted-foreground mt-4">
-                      {(message.content as AIHealthConsultationOutput).disclaimer}
-                    </p>
                   </div>
                 )}
               </div>

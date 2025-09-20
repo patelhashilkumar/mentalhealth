@@ -23,7 +23,6 @@ const RecommendationSchema = z.object({
 
 const AIHealthConsultationOutputSchema = z.object({
   recommendations: z.array(RecommendationSchema).describe('A list of recommendations and advice.'),
-  disclaimer: z.string().describe('A general disclaimer about the medical advice provided.'),
 });
 export type AIHealthConsultationOutput = z.infer<typeof AIHealthConsultationOutputSchema>;
 
@@ -35,7 +34,7 @@ const prompt = ai.definePrompt({
   name: 'aiHealthConsultationPrompt',
   input: {schema: AIHealthConsultationInputSchema},
   output: {schema: AIHealthConsultationOutputSchema},
-  prompt: `You are a helpful AI assistant providing medical advice. Please answer the following medical query with doctor-like responses and medical recommendations. Structure your response as a list of recommendations with a condition, description, and advice for each. Also include a disclaimer that this is not a substitute for professional medical advice.\n\nQuery: {{{query}}}`,
+  prompt: `You are a helpful AI assistant providing medical advice. Please answer the following medical query with doctor-like responses and medical recommendations. Structure your response as a list of recommendations with a condition, description, and advice for each.\n\nQuery: {{{query}}}`,
 });
 
 const aiHealthConsultationFlow = ai.defineFlow(
