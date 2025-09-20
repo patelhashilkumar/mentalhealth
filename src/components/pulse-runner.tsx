@@ -10,9 +10,8 @@ const GAME_HEIGHT = 400;
 const PLAYER_SIZE = 40;
 const OBSTACLE_WIDTH = 30;
 const OBSTACLE_HEIGHT = 60;
-const JUMP_HEIGHT = 120;
-const GRAVITY = 2;
-const JUMP_IMPULSE = -25;
+const GRAVITY = 1;
+const JUMP_IMPULSE = -20;
 const PERFECT_INTERVAL = 500; // ms
 const INTERVAL_TOLERANCE = 150; // ms
 
@@ -48,28 +47,32 @@ const RhythmIndicator = ({ status }: { status: 'perfect' | 'fast' | 'slow' | 'mi
 
 export default function PulseRunner() {
   const [status, setStatus] = useState<GameStatus>('waiting');
-  const [playerY, setPlayerY] = useState(GAME_HEIGHT - PLAYER_SIZE);
-  const [playerVelY, setPlayerVelY] = useState(0);
   const [obstacles, setObstacles] = useState<{ x: number; id: number }[]>([]);
   const [score, setScore] = useState(0);
   const [gameSpeed, setGameSpeed] = useState(5);
-
+  
+  const [rhythmDisplay, setRhythmDisplay] = useState<'perfect' | 'fast' | 'slow' | 'miss'>('miss');
+  
+  // Use refs for game state that changes every frame
+  const playerY = useRef(GAME_HEIGHT - PLAYER_SIZE);
+  const playerVelY = useRef(0);
   const lastTapTime = useRef(0);
   const rhythmStatus = useRef<'perfect' | 'fast' | 'slow' | 'miss'>('miss');
-  const [rhythmDisplay, setRhythmDisplay] = useState(rhythmStatus.current);
-
   const gameLoopRef = useRef<number>();
   const scoreIntervalRef = useRef<NodeJS.Timeout>();
 
+  const [_, setTick] = useState(0);
+
   const resetGame = useCallback(() => {
     setStatus('waiting');
-    setPlayerY(GAME_HEIGHT - PLAYER_SIZE);
-    setPlayerVelY(0);
+    playerY.current = GAME_HEIGHT - PLAYER_SIZE;
+    playerVelY.current = 0;
     setObstacles([]);
     setScore(0);
     setGameSpeed(5);
     lastTapTime.current = 0;
     rhythmStatus.current = 'miss';
+    setRhythmDisplay('miss');
     if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
     if (scoreIntervalRef.current) clearInterval(scoreIntervalRef.current);
   }, []);
@@ -100,9 +103,9 @@ export default function PulseRunner() {
     setRhythmDisplay(rhythmStatus.current);
     setTimeout(() => setRhythmDisplay('miss'), 500);
 
-    // Jump
-    if (playerY >= GAME_HEIGHT - PLAYER_SIZE) {
-      setPlayerVelY(JUMP_IMPULSE);
+    // Jump only if on the ground
+    if (playerY.current >= GAME_HEIGHT - PLAYER_SIZE) {
+      playerVelY.current = JUMP_IMPULSE;
     }
   };
 
@@ -110,32 +113,29 @@ export default function PulseRunner() {
     const gameLoop = () => {
       if (status !== 'playing') return;
 
-      // Player physics
-      setPlayerVelY(prevVelY => {
-        const newVelY = prevVelY + GRAVITY;
-        setPlayerY(prevY => Math.min(GAME_HEIGHT - PLAYER_SIZE, prevY + newVelY));
-        return newVelY;
+      // --- Physics Update using Refs ---
+      playerVelY.current += GRAVITY;
+      playerY.current += playerVelY.current;
+
+      if (playerY.current > GAME_HEIGHT - PLAYER_SIZE) {
+        playerY.current = GAME_HEIGHT - PLAYER_SIZE;
+        playerVelY.current = 0;
+      }
+      
+      setObstacles(prev => {
+        const newObstacles = prev
+          .map(obs => ({ ...obs, x: obs.x - gameSpeed }))
+          .filter(obs => obs.x > -OBSTACLE_WIDTH);
+          
+        const lastObstacle = newObstacles[newObstacles.length - 1];
+        if (!lastObstacle || lastObstacle.x < GAME_WIDTH - 200 - Math.random() * 200) {
+          return [...newObstacles, { x: GAME_WIDTH, id: Date.now() }];
+        }
+        return newObstacles;
       });
 
-
-      // Move obstacles
-      setObstacles(prev =>
-        prev
-          .map(obs => ({ ...obs, x: obs.x - gameSpeed }))
-          .filter(obs => obs.x > -OBSTACLE_WIDTH)
-      );
-
-      // Add new obstacles
-      const lastObstacle = obstacles[obstacles.length - 1];
-      if (!lastObstacle || lastObstacle.x < GAME_WIDTH - 200 - Math.random() * 200) {
-        setObstacles(prev => [
-          ...prev,
-          { x: GAME_WIDTH, id: Date.now() },
-        ]);
-      }
-
-      // Collision detection
-      const playerRect = { x: 50, y: playerY, width: PLAYER_SIZE, height: PLAYER_SIZE };
+      // --- Collision Detection ---
+      const playerRect = { x: 50, y: playerY.current, width: PLAYER_SIZE, height: PLAYER_SIZE };
       for (const obs of obstacles) {
         const obsRect = { x: obs.x, y: GAME_HEIGHT - OBSTACLE_HEIGHT, width: OBSTACLE_WIDTH, height: OBSTACLE_HEIGHT };
         if (
@@ -148,15 +148,18 @@ export default function PulseRunner() {
           return;
         }
       }
+      
+      // Trigger a re-render
+      setTick(tick => tick + 1);
 
       gameLoopRef.current = requestAnimationFrame(gameLoop);
     };
 
     if (status === 'playing') {
-      gameLoopRef.current = requestAnimationFrame(gameLoop);
       scoreIntervalRef.current = setInterval(() => {
         setScore(prev => prev + 1);
       }, 100);
+      gameLoopRef.current = requestAnimationFrame(gameLoop);
     } else {
       if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
       if (scoreIntervalRef.current) clearInterval(scoreIntervalRef.current);
@@ -166,7 +169,7 @@ export default function PulseRunner() {
       if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
       if (scoreIntervalRef.current) clearInterval(scoreIntervalRef.current);
     };
-  }, [status, obstacles, gameSpeed, playerY]);
+  }, [status, gameSpeed, obstacles]);
 
   return (
     <div className="flex flex-col items-center gap-4">
@@ -215,11 +218,11 @@ export default function PulseRunner() {
             background: 'radial-gradient(circle, #ff00ff, #ff80ff)',
             boxShadow: '0 0 20px #ff00ff',
           }}
-          animate={{ y: playerY }}
+          animate={{ y: playerY.current }}
         />
 
         {obstacles.map(obs => (
-          <motion.div
+          <div
             key={obs.id}
             className="absolute bottom-0 w-8 h-16 bg-gradient-to-t from-cyan-400 to-blue-500 rounded-t-md"
             style={{
