@@ -31,9 +31,8 @@ export default function Dashboard() {
           <FeatureCard
             title="Feed"
             description="Discover content and connect with others."
-            href="#"
+            href="/feed"
             icon={<Newspaper className="w-8 h-8 text-primary" />}
-            disabled
           />
         </div>
       </main>
