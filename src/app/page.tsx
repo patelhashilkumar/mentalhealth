@@ -1,5 +1,5 @@
 'use client';
-import { useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { ArrowLeft, CalendarDays } from 'lucide-react';
 import Link from 'next/link';
@@ -12,7 +12,11 @@ import DailyMood from '@/components/daily-mood';
 
 export default function StateOfMindPage() {
   const { mood } = useMood();
-  const today = useMemo(() => format(new Date(), 'd LLL'), []);
+  const [today, setToday] = useState('');
+
+  useEffect(() => {
+    setToday(format(new Date(), 'd LLL'));
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
