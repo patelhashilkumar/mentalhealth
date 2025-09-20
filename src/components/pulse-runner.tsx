@@ -10,10 +10,10 @@ const GAME_HEIGHT = 400;
 const PLAYER_SIZE = 40;
 const OBSTACLE_WIDTH = 30;
 const OBSTACLE_HEIGHT = 60;
-const GRAVITY = 1;
+const GRAVITY = 0.8;
 const JUMP_IMPULSE = -20;
 const PERFECT_INTERVAL = 500; // ms
-const INTERVAL_TOLERANCE = 150; // ms
+const INTERVAL_TOLERANCE = 250; // ms
 
 type GameStatus = 'waiting' | 'playing' | 'gameover';
 
@@ -60,6 +60,7 @@ export default function PulseRunner() {
   const rhythmStatus = useRef<'perfect' | 'fast' | 'slow' | 'miss'>('miss');
   const gameLoopRef = useRef<number>();
   const scoreIntervalRef = useRef<NodeJS.Timeout>();
+  const gameOver = useRef(false);
 
   const [_, setTick] = useState(0);
 
@@ -73,6 +74,7 @@ export default function PulseRunner() {
     lastTapTime.current = 0;
     rhythmStatus.current = 'miss';
     setRhythmDisplay('miss');
+    gameOver.current = false;
     if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
     if (scoreIntervalRef.current) clearInterval(scoreIntervalRef.current);
   }, []);
@@ -104,14 +106,14 @@ export default function PulseRunner() {
     setTimeout(() => setRhythmDisplay('miss'), 500);
 
     // Jump only if on the ground
-    if (playerY.current >= GAME_HEIGHT - PLAYER_SIZE) {
+    if (playerY.current >= GAME_HEIGHT - PLAYER_SIZE - 1) { // -1 for floating point buffer
       playerVelY.current = JUMP_IMPULSE;
     }
   };
 
   useEffect(() => {
     const gameLoop = () => {
-      if (status !== 'playing') return;
+      if (gameOver.current) return;
 
       // --- Physics Update using Refs ---
       playerVelY.current += GRAVITY;
@@ -122,21 +124,20 @@ export default function PulseRunner() {
         playerVelY.current = 0;
       }
       
-      setObstacles(prev => {
-        const newObstacles = prev
+      let newObstacles = obstacles
           .map(obs => ({ ...obs, x: obs.x - gameSpeed }))
           .filter(obs => obs.x > -OBSTACLE_WIDTH);
           
-        const lastObstacle = newObstacles[newObstacles.length - 1];
-        if (!lastObstacle || lastObstacle.x < GAME_WIDTH - 200 - Math.random() * 200) {
-          return [...newObstacles, { x: GAME_WIDTH, id: Date.now() }];
-        }
-        return newObstacles;
-      });
+      const lastObstacle = newObstacles[newObstacles.length - 1];
+      if (!lastObstacle || lastObstacle.x < GAME_WIDTH - 200 - Math.random() * 200) {
+        newObstacles = [...newObstacles, { x: GAME_WIDTH, id: Date.now() }];
+      }
+      setObstacles(newObstacles);
+
 
       // --- Collision Detection ---
       const playerRect = { x: 50, y: playerY.current, width: PLAYER_SIZE, height: PLAYER_SIZE };
-      for (const obs of obstacles) {
+      for (const obs of newObstacles) {
         const obsRect = { x: obs.x, y: GAME_HEIGHT - OBSTACLE_HEIGHT, width: OBSTACLE_WIDTH, height: OBSTACLE_HEIGHT };
         if (
           playerRect.x < obsRect.x + obsRect.width &&
@@ -144,6 +145,7 @@ export default function PulseRunner() {
           playerRect.y < obsRect.y + obsRect.height &&
           playerRect.y + playerRect.height > obsRect.y
         ) {
+          gameOver.current = true;
           setStatus('gameover');
           return;
         }
@@ -156,8 +158,11 @@ export default function PulseRunner() {
     };
 
     if (status === 'playing') {
+      gameOver.current = false;
       scoreIntervalRef.current = setInterval(() => {
-        setScore(prev => prev + 1);
+        if (!gameOver.current) {
+          setScore(prev => prev + 1);
+        }
       }, 100);
       gameLoopRef.current = requestAnimationFrame(gameLoop);
     } else {
@@ -169,7 +174,7 @@ export default function PulseRunner() {
       if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
       if (scoreIntervalRef.current) clearInterval(scoreIntervalRef.current);
     };
-  }, [status, gameSpeed, obstacles]);
+  }, [status, gameSpeed]);
 
   return (
     <div className="flex flex-col items-center gap-4">
