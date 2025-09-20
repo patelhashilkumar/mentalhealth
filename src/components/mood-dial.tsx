@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { useDrag } from '@use-gesture/react';
+import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -35,6 +36,7 @@ const MoodDial = () => {
   const [angle, setAngle] = useState(0);
   const { toast } = useToast();
   const { setMoodEmoji } = useMood();
+  const router = useRouter();
 
   useEffect(() => {
     const neutralIndex = moods.findIndex(m => m.name === 'Neutral');
@@ -69,6 +71,11 @@ const MoodDial = () => {
         title: 'Mood Logged!',
         description: `You're feeling: ${selectedMood.name} ${selectedMood.emoji}`,
       });
+      router.push(
+        `/mood-details?mood=${encodeURIComponent(
+          selectedMood.name
+        )}&emoji=${encodeURIComponent(selectedMood.emoji)}`
+      );
     }
   };
 
@@ -156,10 +163,10 @@ const MoodDial = () => {
         disabled={!selectedMood}
         size="lg"
         onClick={handleLogMood}
-        className="transition-colors"
+        className="transition-colors rounded-full px-12 text-lg"
         style={{
           backgroundColor: selectedMood
-            ? selectedMood.color
+            ? 'hsl(var(--primary))'
             : 'hsl(var(--muted))',
           color: 'hsl(var(--primary-foreground))',
         }}

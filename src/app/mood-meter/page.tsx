@@ -7,7 +7,7 @@ import MoodDial from '@/components/mood-dial';
 export default function MoodMeterPage() {
   return (
     <div className="flex flex-col h-screen bg-background">
-      <header className="flex items-center justify-between p-4 border-b shadow-sm">
+      <header className="flex items-center justify-between p-4 border-b border-border/10 shadow-sm">
         <div className="flex items-center">
           <Button asChild variant="ghost" size="icon" className="mr-2">
             <Link href="/">

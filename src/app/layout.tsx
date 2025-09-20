@@ -3,7 +3,6 @@ import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import './globals.css';
 import { MoodProvider } from '@/context/mood-context';
-import MoodMonitor from '@/components/mood-monitor';
 
 export const metadata: Metadata = {
   title: 'AI Doc',
@@ -16,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -32,7 +31,6 @@ export default function RootLayout({
       <body className={cn('font-body antialiased')}>
         <MoodProvider>
           {children}
-          <MoodMonitor />
           <Toaster />
         </MoodProvider>
       </body>
