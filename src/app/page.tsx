@@ -21,7 +21,7 @@ export default function Dashboard() {
         </div>
       </header>
       <main className="flex-1 p-6">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
           <FeatureCard
             title="AI Doc"
             description="Your personal AI health assistant."
