@@ -11,7 +11,7 @@ import Link from 'next/link';
 export default function SignupPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-   const [confirmPassword, setConfirmPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const { signup } = useAuth();
@@ -26,8 +26,14 @@ export default function SignupPage() {
     try {
       await signup(email, password);
       router.push('/');
-    } catch (err) {
-      setError('Failed to sign up. Please try again.');
+    } catch (err: any) {
+      if (err.code === 'auth/email-already-in-use') {
+        setError('This email is already registered. Please log in.');
+      } else if (err.code === 'auth/weak-password') {
+        setError('The password is too weak. It must be at least 6 characters long.');
+      } else {
+        setError('Failed to sign up. Please try again.');
+      }
     }
   };
 
