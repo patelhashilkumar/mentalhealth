@@ -12,65 +12,71 @@ import {
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
-const feelings = [
-  'Content',
-  'Calm',
-  'Peaceful',
-  'Indifferent',
-  'Drained',
-  'Hopeful',
-  'Stressed',
-  'Anxious',
-  'Overwhelmed',
+const impacts = [
+  'Health',
+  'Fitness',
+  'Self-Care',
+  'Hobbies',
+  'Identity',
+  'Spirituality',
+  'Community',
+  'Family',
+  'Friends',
+  'Partner',
+  'Dating',
+  'Tasks',
+  'Work',
+  'Education',
+  'Travel',
+  'Weather',
+  'Current Events',
+  'Money',
 ];
 
-const FeelingButton = ({
-  feeling,
+const ImpactButton = ({
+  impact,
   isSelected,
   onSelect,
 }: {
-  feeling: string;
+  impact: string;
   isSelected: boolean;
-  onSelect: (feeling: string) => void;
+  onSelect: (impact: string) => void;
 }) => (
   <Button
     variant="outline"
-    onClick={() => onSelect(feeling)}
+    onClick={() => onSelect(impact)}
     className={cn(
-      'rounded-full border-2 text-base h-auto py-2 px-6',
+      'rounded-full border-2 text-base h-auto py-2 px-4',
       isSelected
         ? 'bg-primary/20 border-primary text-primary-foreground'
         : 'bg-secondary/50 border-secondary text-muted-foreground'
     )}
   >
-    {feeling}
+    {impact}
   </Button>
 );
 
-export default function MoodDetailsPage() {
+export default function MoodImpactPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const mood = searchParams.get('mood') || 'Neutral';
   const emoji = searchParams.get('emoji') || '😐';
 
-  const [selectedFeelings, setSelectedFeelings] = useState<string[]>([]);
-  const [showMore, setShowMore] = useState(false);
+  const [selectedImpacts, setSelectedImpacts] = useState<string[]>([]);
 
-  const toggleFeeling = (feeling: string) => {
-    setSelectedFeelings(prev =>
-      prev.includes(feeling)
-        ? prev.filter(f => f !== feeling)
-        : [...prev, feeling]
+  const toggleImpact = (impact: string) => {
+    setSelectedImpacts(prev =>
+      prev.includes(impact)
+        ? prev.filter(i => i !== impact)
+        : [...prev, impact]
     );
   };
 
-  const handleNext = () => {
-    const params = new URLSearchParams(searchParams);
-    params.set('feelings', selectedFeelings.join(','));
-    router.push(`/mood-impact?${params.toString()}`);
+  const handleDone = () => {
+    // Here you would typically save the full mood entry
+    // For now, we just navigate home.
+    router.push('/');
   };
-
-  const displayedFeelings = showMore ? feelings : feelings.slice(0, 5);
 
   return (
     <div className="flex flex-col h-screen bg-background text-foreground">
@@ -82,7 +88,7 @@ export default function MoodDetailsPage() {
           className="text-muted-foreground"
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Mood
+          Back
         </Button>
         <Button
           variant="ghost"
@@ -105,7 +111,7 @@ export default function MoodDetailsPage() {
         <div className="w-full max-w-md mt-12">
           <div className="flex items-center gap-2 mb-4">
             <h2 className="text-lg font-medium text-muted-foreground">
-              What best describes this feeling?
+              What's having the biggest impact on you?
             </h2>
             <TooltipProvider>
               <Tooltip>
@@ -113,32 +119,22 @@ export default function MoodDetailsPage() {
                   <Info className="w-4 h-4 text-muted-foreground/50" />
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Select one or more feelings that apply.</p>
+                  <p>Select one or more impacts that apply.</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </div>
 
           <div className="flex flex-wrap gap-3">
-            {displayedFeelings.map(feeling => (
-              <FeelingButton
-                key={feeling}
-                feeling={feeling}
-                isSelected={selectedFeelings.includes(feeling)}
-                onSelect={toggleFeeling}
+            {impacts.map(impact => (
+              <ImpactButton
+                key={impact}
+                impact={impact}
+                isSelected={selectedImpacts.includes(impact)}
+                onSelect={toggleImpact}
               />
             ))}
           </div>
-
-          {!showMore && feelings.length > 5 && (
-            <Button
-              variant="link"
-              onClick={() => setShowMore(true)}
-              className="text-primary mt-4 px-0"
-            >
-              Show More >
-            </Button>
-          )}
         </div>
       </main>
 
@@ -146,9 +142,9 @@ export default function MoodDetailsPage() {
         <Button
           size="lg"
           className="w-full bg-primary text-primary-foreground text-lg rounded-full"
-          onClick={handleNext}
+          onClick={handleDone}
         >
-          Next
+          Done
         </Button>
       </footer>
     </div>
