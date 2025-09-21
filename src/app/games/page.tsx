@@ -138,7 +138,7 @@ const games = [
 ];
 
 const GameCard = ({ game }: { game: (typeof games)[0] }) => (
-  <Card className="group flex flex-col overflow-hidden bg-card transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1">
+  <Card className="group flex flex-col overflow-hidden bg-card transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1">
     <div className="relative h-40 w-full">
       <Image
         src={`https://source.unsplash.com/600x400/?${game.imageHint}`}
@@ -236,7 +236,7 @@ function GamesPageContent() {
   }, [genre, tag, playtime, sort]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50/50 via-white to-cyan-50/50 text-gray-800">
+    <div className="flex flex-col min-h-screen">
       <header className="flex items-center justify-between p-4 border-b bg-transparent">
         <div className="flex items-center">
           <Button asChild variant="ghost" size="icon" className="mr-2">
@@ -245,7 +245,7 @@ function GamesPageContent() {
             </Link>
           </Button>
           <Gamepad2 className="w-8 h-8 mr-3 text-primary" />
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 font-headline">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground font-headline">
             Games
           </h1>
         </div>
@@ -325,5 +325,3 @@ export default function GamesPage() {
     </AuthGuard>
   );
 }
-
-    
