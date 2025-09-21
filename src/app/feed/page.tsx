@@ -1,3 +1,4 @@
+
 'use client';
 import { Newspaper, ArrowLeft, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
@@ -8,6 +9,7 @@ import AuthGuard from '@/components/auth-guard';
 import { useEffect, useState } from 'react';
 import { getAiFeed } from '../actions';
 import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 
 type FeedItem = {
   id: number;
