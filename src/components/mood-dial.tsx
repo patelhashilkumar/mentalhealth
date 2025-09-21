@@ -34,7 +34,7 @@ const LABEL_RADIUS = DIAL_RADIUS + 50;
 const MoodDial = () => {
   const dialRef = useRef<HTMLDivElement>(null);
   const [angle, setAngle] = useState(0);
-  const { setMood } = useMood();
+  const { addMood } = useMood();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -68,7 +68,7 @@ const MoodDial = () => {
 
   const handleLogMood = () => {
     if (selectedMood) {
-      setMood({ name: selectedMood.name, emoji: selectedMood.emoji });
+      addMood({ name: selectedMood.name, emoji: selectedMood.emoji });
       toast({
         title: 'Mood Logged!',
         description: `You're feeling: ${selectedMood.name} ${selectedMood.emoji}`,

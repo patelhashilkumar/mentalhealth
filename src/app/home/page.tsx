@@ -8,6 +8,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import MoodDial from '@/components/mood-dial';
 import { useMood } from '@/context/mood-context';
+import MoodHistory from '@/components/mood-history';
 
 const SummaryCard = ({
   icon: Icon,
@@ -28,10 +29,11 @@ const SummaryCard = ({
 );
 
 export default function HomePage() {
-  const { mood } = useMood();
+  const { moods } = useMood();
+  const recentMood = moods[0] || null;
   return (
-    <>
-      <div className="bg-white/60 backdrop-blur-lg border border-gray-200/60 rounded-3xl p-8 mb-8 shadow-sm text-center">
+    <div className="space-y-8">
+      <div className="bg-white/60 backdrop-blur-lg border border-gray-200/60 rounded-3xl p-8 shadow-sm text-center">
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
           How are you feeling today?
         </h2>
@@ -43,14 +45,16 @@ export default function HomePage() {
           <MoodDial />
         </div>
       </div>
+      
+      <MoodHistory />
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <SummaryCard icon={Clock} title="Recent Mood">
-          {mood ? (
+          {recentMood ? (
             <div className="flex items-center gap-4">
-              <p className="text-5xl">{mood.emoji}</p>
+              <p className="text-5xl">{recentMood.emoji}</p>
               <div>
-                <p className="text-xl font-bold text-gray-800">{mood.name}</p>
+                <p className="text-xl font-bold text-gray-800">{recentMood.name}</p>
                 <p className="text-sm text-gray-500">Today</p>
               </div>
             </div>
@@ -65,7 +69,7 @@ export default function HomePage() {
           )}
         </SummaryCard>
         <SummaryCard icon={Flame} title="Streak">
-          <p className="text-5xl font-bold text-gray-800">1</p>
+          <p className="text-5xl font-bold text-gray-800">{moods.length}</p>
           <p className="text-sm text-gray-500">Days logged</p>
         </SummaryCard>
         <SummaryCard icon={Heart} title="Average Mood">
@@ -73,6 +77,6 @@ export default function HomePage() {
           <p className="text-sm text-gray-500">This month</p>
         </SummaryCard>
       </div>
-    </>
+    </div>
   );
 }

@@ -6,24 +6,31 @@ import React, {
   useContext,
   ReactNode,
   useMemo,
+  useCallback,
 } from 'react';
 
-type Mood = {
+export type Mood = {
   name: string;
   emoji: string;
+  date: Date;
 };
 
 type MoodContextType = {
-  mood: Mood | null;
-  setMood: (mood: Mood | null) => void;
+  moods: Mood[];
+  addMood: (mood: Omit<Mood, 'date'>) => void;
 };
 
 const MoodContext = createContext<MoodContextType | undefined>(undefined);
 
 export function MoodProvider({ children }: { children: ReactNode }) {
-  const [mood, setMood] = useState<Mood | null>(null);
+  const [moods, setMoods] = useState<Mood[]>([]);
 
-  const value = useMemo(() => ({ mood, setMood }), [mood]);
+  const addMood = useCallback((mood: Omit<Mood, 'date'>) => {
+    const newMood = { ...mood, date: new Date() };
+    setMoods(prevMoods => [newMood, ...prevMoods]);
+  }, []);
+
+  const value = useMemo(() => ({ moods, addMood }), [moods, addMood]);
 
   return <MoodContext.Provider value={value}>{children}</MoodContext.Provider>;
 }

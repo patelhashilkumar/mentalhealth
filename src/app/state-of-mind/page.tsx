@@ -14,7 +14,8 @@ import type { MoodSummaryOutput } from '@/ai/flows/mood-summary';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function StateOfMindPage() {
-  const { mood } = useMood();
+  const { moods } = useMood();
+  const mood = moods[0] || null;
   const [today, setToday] = useState('');
   const [aiResponse, setAiResponse] = useState<MoodSummaryOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -57,7 +58,8 @@ export default function StateOfMindPage() {
       }
     }
     fetchSummary();
-  }, [mood]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [moods]);
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
