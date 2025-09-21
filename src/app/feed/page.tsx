@@ -1,55 +1,66 @@
 'use client';
-import { Newspaper, ArrowLeft } from 'lucide-react';
+import { Newspaper, ArrowLeft, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Image from 'next/image';
 import AuthGuard from '@/components/auth-guard';
+import { useEffect, useState } from 'react';
+import { getAiFeed } from '../actions';
+import { Skeleton } from '@/components/ui/skeleton';
 
-const feedItems = [
-  {
-    id: 1,
-    author: 'Dr. Evelyn Reed',
-    title: 'The Surprising Benefits of a Digital Detox',
-    description:
-      "In our hyper-connected world, taking a break from screens can have profound effects on our mental well-being. Discover how a digital detox can improve your focus, reduce anxiety, and help you reconnect with the world around you.",
-    imageUrl: 'https://picsum.photos/seed/feed1/600/400',
-    imageHint: 'nature person',
-    minutesToRead: 5,
-  },
-  {
-    id: 2,
-    author: 'Marcus Chen',
-    title: 'Mindful Breathing: A Simple Trick to Calm Your Mind',
-    description:
-      'Anxiety can strike at any moment. This simple but powerful mindful breathing technique can be done anywhere, anytime, to bring a sense of calm and centeredness to your day. Learn the steps and start practicing today.',
-    imageUrl: 'https://picsum.photos/seed/feed2/600/400',
-    imageHint: 'yoga meditation',
-    minutesToRead: 3,
-  },
-  {
-    id: 3,
-    author: 'Aisha Khan',
-    title: 'Building Resilience: How to Bounce Back from Setbacks',
-    description:
-      "Life is full of challenges, but it's our ability to bounce back that defines us. Explore practical strategies for building mental and emotional resilience, turning adversity into an opportunity for growth.",
-    imageUrl: 'https://picsum.photos/seed/feed3/600/400',
-    imageHint: 'mountain sunrise',
-    minutesToRead: 7,
-  },
-  {
-    id: 4,
-    author: 'Ben Carter',
-    title: 'The Connection Between Nutrition and Mood',
-    description:
-      'Did you know that what you eat can directly impact how you feel? We dive into the science behind the gut-brain axis and offer tips on foods that can help boost your mood and support mental clarity.',
-    imageUrl: 'https://picsum.photos/seed/feed4/600/400',
-    imageHint: 'healthy food',
-    minutesToRead: 6,
-  },
-];
+type FeedItem = {
+  id: number;
+  author: string;
+  title: string;
+  description: string;
+  imageHint: string;
+  minutesToRead: number;
+};
+
+const FeedSkeleton = () => (
+  <div className="grid grid-cols-1 gap-8 p-6 md:grid-cols-2 lg:grid-cols-3">
+    {Array.from({ length: 3 }).map((_, index) => (
+      <div
+        key={index}
+        className="flex flex-col overflow-hidden bg-card border rounded-lg shadow-sm"
+      >
+        <Skeleton className="w-full h-48" />
+        <div className="flex flex-col flex-1 p-6">
+          <Skeleton className="w-3/4 h-6 mb-4" />
+          <Skeleton className="w-full h-4 mb-2" />
+          <Skeleton className="w-full h-4 mb-4" />
+          <div className="flex items-center justify-between mt-auto">
+            <Skeleton className="w-1/3 h-4" />
+            <Skeleton className="w-1/4 h-4" />
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+);
 
 function FeedPageContent() {
+  const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchFeed = async () => {
+    setIsLoading(true);
+    try {
+      const { articles } = await getAiFeed();
+      setFeedItems(articles);
+    } catch (error) {
+      console.error('Failed to fetch feed:', error);
+      // Optionally set some error state to show to the user
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchFeed();
+  }, []);
+
   return (
     <div className="flex flex-col h-screen bg-background">
       <header className="flex items-center justify-between p-4 border-b shadow-sm">
@@ -64,39 +75,49 @@ function FeedPageContent() {
             Feed
           </h1>
         </div>
+        <Button onClick={fetchFeed} variant="outline" disabled={isLoading}>
+          <RefreshCw
+            className={cn('mr-2 h-4 w-4', isLoading && 'animate-spin')}
+          />
+          Refresh Feed
+        </Button>
       </header>
       <main className="flex-1 overflow-hidden">
         <ScrollArea className="h-full">
-          <div className="grid grid-cols-1 gap-8 p-6 md:grid-cols-2 lg:grid-cols-3">
-            {feedItems.map((item) => (
-              <div
-                key={item.id}
-                className="flex flex-col overflow-hidden transition-all duration-300 bg-card border rounded-lg shadow-sm hover:scale-105 hover:shadow-primary/20"
-              >
-                <div className="relative w-full h-48">
-                  <Image
-                    src={item.imageUrl}
-                    alt={item.title}
-                    fill
-                    className="object-cover"
-                    data-ai-hint={item.imageHint}
-                  />
-                </div>
-                <div className="flex flex-col flex-1 p-6">
-                  <h2 className="mb-2 text-xl font-bold text-foreground font-headline">
-                    {item.title}
-                  </h2>
-                  <p className="flex-1 mb-4 text-sm text-muted-foreground">
-                    {item.description}
-                  </p>
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>By {item.author}</span>
-                    <span>{item.minutesToRead} min read</span>
+          {isLoading ? (
+            <FeedSkeleton />
+          ) : (
+            <div className="grid grid-cols-1 gap-8 p-6 md:grid-cols-2 lg:grid-cols-3">
+              {feedItems.map((item, index) => (
+                <div
+                  key={item.id}
+                  className="flex flex-col overflow-hidden transition-all duration-300 bg-card border rounded-lg shadow-sm hover:scale-105 hover:shadow-primary/20"
+                >
+                  <div className="relative w-full h-48">
+                    <Image
+                      src={`https://picsum.photos/seed/feed${index + 1}/${item.id}/600/400`}
+                      alt={item.title}
+                      fill
+                      className="object-cover"
+                      data-ai-hint={item.imageHint}
+                    />
+                  </div>
+                  <div className="flex flex-col flex-1 p-6">
+                    <h2 className="mb-2 text-xl font-bold text-foreground font-headline">
+                      {item.title}
+                    </h2>
+                    <p className="flex-1 mb-4 text-sm text-muted-foreground">
+                      {item.description}
+                    </p>
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>By {item.author}</span>
+                      <span>{item.minutesToRead} min read</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </ScrollArea>
       </main>
     </div>

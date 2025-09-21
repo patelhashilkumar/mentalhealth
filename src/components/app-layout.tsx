@@ -3,7 +3,7 @@
 import {
   LayoutGrid,
   MessageSquare,
-  Activity,
+  Newspaper,
   User,
   Gamepad2,
   LogOut,
@@ -25,9 +25,9 @@ const navItems = [
     icon: MessageSquare,
   },
   {
-    name: 'Activity',
+    name: 'Feed',
     href: '/feed',
-    icon: Activity,
+    icon: Newspaper,
   },
   {
     name: 'Games',

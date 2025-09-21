@@ -8,6 +8,8 @@ import { getMoodSummary } from '@/ai/flows/mood-summary';
 import type { MoodSummaryInput, MoodSummaryOutput } from '@/ai/flows/mood-summary';
 import { getDailyQuestion } from '@/ai/flows/daily-question';
 import type { DailyQuestionOutput } from '@/ai/flows/daily-question';
+import { generateFeed } from '@/ai/flows/generate-feed';
+import type { GenerateFeedOutput } from '@/ai/flows/generate-feed';
 
 
 export async function getAiReply(
@@ -68,5 +70,15 @@ export async function getAiDailyQuestion(): Promise<DailyQuestionOutput> {
     return {
       question: 'What is one thing you are grateful for today?',
     };
+  }
+}
+
+export async function getAiFeed(): Promise<GenerateFeedOutput> {
+  try {
+    const result = await generateFeed();
+    return result;
+  } catch (error) {
+    console.error('Error generating AI feed:', error);
+    throw new Error('Failed to get a response from the AI assistant.');
   }
 }
