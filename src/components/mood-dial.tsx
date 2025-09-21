@@ -123,9 +123,9 @@ const MoodDial = () => {
           );
         })}
 
-        <div className="absolute w-[220px] h-[220px] bg-card/50 backdrop-blur-xl rounded-full flex items-center justify-center shadow-lg">
+        <div className="absolute w-[200px] h-[200px] bg-card/50 backdrop-blur-xl rounded-full flex items-center justify-center shadow-lg">
           <span
-            className="text-8xl transition-transform duration-300 ease-in-out"
+            className="text-7xl transition-transform duration-300 ease-in-out"
             style={{ transform: `scale(${selectedMood ? 1 : 0.5})` }}
           >
             {selectedMood?.emoji}
