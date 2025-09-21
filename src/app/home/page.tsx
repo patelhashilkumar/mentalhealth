@@ -8,11 +8,11 @@ import {
   Clock,
   Flame,
   Heart,
-  SmilePlus,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import MoodSelector from '@/components/mood-selector';
 
 const navItems = [
   {
@@ -39,15 +39,6 @@ const navItems = [
     icon: User,
     isActive: false,
   },
-];
-
-const moods = [
-  { emoji: '😡', angle: 0 },
-  { emoji: '😟', angle: 60 },
-  { emoji: '😐', angle: 120 },
-  { emoji: '🙂', angle: 180 },
-  { emoji: '😄', angle: 240 },
-  { emoji: '🤩', angle: 300 },
 ];
 
 const SummaryCard = ({
@@ -108,33 +99,7 @@ export default function HomePage() {
           </p>
 
           <div className="flex items-center justify-center h-80">
-            <div className="relative w-80 h-80">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-24 h-24 bg-gray-100 rounded-full flex flex-col items-center justify-center text-gray-400 text-sm">
-                  <SmilePlus className="w-6 h-6 mb-1" />
-                  Select
-                </div>
-              </div>
-              {moods.map(({ emoji, angle }) => {
-                const x = 110 * Math.cos((angle * Math.PI) / 180);
-                const y = 110 * Math.sin((angle * Math.PI) / 180);
-                return (
-                  <Button
-                    key={angle}
-                    size="icon"
-                    variant="ghost"
-                    className="absolute w-20 h-20 text-4xl bg-white/50 rounded-full shadow-md transition-transform hover:scale-110"
-                    style={{
-                      top: '50%',
-                      left: '50%',
-                      transform: `translate(-50%, -50%) translate(${x}px, ${y}px)`,
-                    }}
-                  >
-                    {emoji}
-                  </Button>
-                );
-              })}
-            </div>
+            <MoodSelector />
           </div>
         </div>
 
