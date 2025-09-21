@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import './globals.css';
 import { MoodProvider } from '@/context/mood-context';
 import AppLayout from '@/components/app-layout';
+import { ProfileProvider } from '@/context/profile-context';
 
 export const metadata: Metadata = {
   title: 'AI Doc',
@@ -30,10 +31,12 @@ export default function RootLayout({
         />
       </head>
       <body className={cn('font-body antialiased')}>
-        <MoodProvider>
-          <AppLayout>{children}</AppLayout>
-          <Toaster />
-        </MoodProvider>
+        <ProfileProvider>
+          <MoodProvider>
+            <AppLayout>{children}</AppLayout>
+            <Toaster />
+          </MoodProvider>
+        </ProfileProvider>
       </body>
     </html>
   );

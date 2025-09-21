@@ -9,8 +9,6 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { useState, type FormEvent } from 'react';
 import {
   Card,
   CardContent,
@@ -19,6 +17,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { useProfile } from '@/context/profile-context';
 
 const GameSection = ({
   title,
@@ -84,25 +83,33 @@ const GameCardPlaceholder = ({
 );
 
 export default function GamesPage() {
-  const [age, setAge] = useState<number | null>(null);
-  const [ageInput, setAgeInput] = useState('');
-  const [error, setError] = useState('');
-
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    const parsedAge = parseInt(ageInput, 10);
-    if (isNaN(parsedAge) || parsedAge <= 0) {
-      setError('Please enter a valid age.');
-    } else if (parsedAge < 12) {
-      setError('You must be at least 12 years old to play.');
-    } else {
-      setAge(parsedAge);
-      setError('');
-    }
-  };
+  const { profileData } = useProfile();
+  const age = profileData.age;
 
   const renderGameSection = () => {
-    if (!age) return null;
+    if (!age) {
+      return (
+         <div className="w-full max-w-sm text-center">
+            <Card className="text-center">
+              <CardHeader>
+                <CardTitle className="text-2xl font-headline">
+                  What's your age?
+                </CardTitle>
+                 <CardDescription>
+                  Please set your age in your profile to see available games.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                  <Button asChild size="lg" className="w-full">
+                    <Link href="/profile">
+                      Go to Profile
+                    </Link>
+                  </Button>
+              </CardContent>
+            </Card>
+          </div>
+      )
+    };
 
     if (age >= 12 && age <= 17) {
       return (
@@ -160,12 +167,6 @@ export default function GamesPage() {
     }
   };
 
-  const resetAge = () => {
-    setAge(null);
-    setAgeInput('');
-    setError('');
-  };
-
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
       <header className="flex items-center justify-between p-4 border-b shadow-sm">
@@ -180,42 +181,9 @@ export default function GamesPage() {
             Games
           </h1>
         </div>
-        {age && (
-          <Button variant="outline" onClick={resetAge}>
-            Change Age
-          </Button>
-        )}
       </header>
       <main className="flex-1 flex items-center justify-center p-6">
-        {age === null ? (
-          <div className="w-full max-w-sm">
-            <Card className="text-center">
-              <CardHeader>
-                <CardTitle className="text-2xl font-headline">
-                  What's your age?
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <Input
-                    type="number"
-                    value={ageInput}
-                    onChange={(e) => setAgeInput(e.target.value)}
-                    placeholder="Enter your age"
-                    className="text-center text-lg h-12"
-                    aria-label="Age"
-                  />
-                  {error && <p className="text-destructive text-sm">{error}</p>}
-                  <Button type="submit" size="lg" className="w-full">
-                    Continue
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
-        ) : (
-          renderGameSection()
-        )}
+        {renderGameSection()}
       </main>
     </div>
   );

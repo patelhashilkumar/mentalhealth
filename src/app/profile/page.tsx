@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
+import { useProfile } from '@/context/profile-context';
 
 const StatCard = ({
   value,
@@ -101,16 +102,8 @@ const TagButton = ({
 );
 
 export default function ProfilePage() {
+  const { profileData, setProfileData } = useProfile();
   const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState({
-    name: 'Anvesha',
-    age: 21,
-    gender: 'Female',
-    country: 'India',
-    sleepHours: 7,
-    interests: ['Reading', 'Music', 'Exercise'],
-    stressors: ['Deadlines', 'Work', 'School'],
-  });
   const [tempProfileData, setTempProfileData] = useState(profileData);
 
   const handleEditToggle = () => {
