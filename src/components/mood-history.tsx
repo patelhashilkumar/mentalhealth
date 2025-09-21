@@ -20,8 +20,8 @@ export default function MoodHistory() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-40">
-          <div className="space-y-4">
+        <ScrollArea className="max-h-40">
+          <div className="space-y-4 pr-4">
             {moods.map((mood, index) => (
               <div key={index} className="flex items-center justify-between">
                 <div className="flex items-center gap-4">

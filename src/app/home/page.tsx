@@ -9,6 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import MoodDial from '@/components/mood-dial';
 import { useMood } from '@/context/mood-context';
 import MoodHistory from '@/components/mood-history';
+import { useMemo } from 'react';
+import type { Mood } from '@/context/mood-context';
 
 const SummaryCard = ({
   icon: Icon,
@@ -31,6 +33,22 @@ const SummaryCard = ({
 export default function HomePage() {
   const { moods } = useMood();
   const recentMood = moods[0] || null;
+
+  const averageMood = useMemo(() => {
+    if (moods.length === 0) return null;
+
+    const moodCounts = moods.reduce((acc: { [key: string]: number }, mood: Mood) => {
+      acc[mood.name] = (acc[mood.name] || 0) + 1;
+      return acc;
+    }, {});
+
+    const mostFrequentMoodName = Object.keys(moodCounts).reduce((a, b) =>
+      moodCounts[a] > moodCounts[b] ? a : b
+    );
+
+    return moods.find(mood => mood.name === mostFrequentMoodName) || null;
+  }, [moods]);
+
   return (
     <div className="space-y-8">
       <div className="bg-white/60 backdrop-blur-lg border border-gray-200/60 rounded-3xl p-8 shadow-sm text-center">
@@ -73,8 +91,23 @@ export default function HomePage() {
           <p className="text-sm text-gray-500">Days logged</p>
         </SummaryCard>
         <SummaryCard icon={Heart} title="Average Mood">
-          <p className="text-5xl font-bold text-gray-800">-</p>
-          <p className="text-sm text-gray-500">This month</p>
+          {averageMood ? (
+            <div className="flex items-center gap-4">
+              <p className="text-5xl">{averageMood.emoji}</p>
+              <div>
+                <p className="text-xl font-bold text-gray-800">{averageMood.name}</p>
+                <p className="text-sm text-gray-500">This month</p>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-4">
+              <p className="text-5xl">🤔</p>
+              <div>
+                <p className="text-xl font-bold text-gray-800">No Data</p>
+                <p className="text-sm text-gray-500">This month</p>
+              </div>
+            </div>
+          )}
         </SummaryCard>
       </div>
     </div>
