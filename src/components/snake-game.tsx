@@ -139,18 +139,29 @@ const SnakeGame: React.FC = () => {
 
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     
-    // Draw grid
-    ctx.strokeStyle = 'hsl(var(--border) / 0.1)';
-    for (let i = 0; i < GRID_SIZE; i++) {
-        for (let j = 0; j < GRID_SIZE; j++) {
-            ctx.strokeRect(i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-        }
+    const drawRoundedRect = (x: number, y: number, width: number, height: number, radius: number) => {
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + width - radius, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+        ctx.lineTo(x + width, y + height - radius);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        ctx.lineTo(x + radius, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
+        ctx.fill();
     }
 
     // Draw snake
-    ctx.fillStyle = 'hsl(var(--primary))';
-    snake.forEach(segment => {
-      ctx.fillRect(segment.x * CELL_SIZE, segment.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+    snake.forEach((segment, index) => {
+        if (index === 0) {
+            ctx.fillStyle = 'hsl(var(--primary) / 0.8)';
+        } else {
+            ctx.fillStyle = 'hsl(var(--primary))';
+        }
+      drawRoundedRect(segment.x * CELL_SIZE + 2, segment.y * CELL_SIZE + 2, CELL_SIZE - 4, CELL_SIZE - 4, 8);
     });
 
     // Draw food
@@ -160,9 +171,9 @@ const SnakeGame: React.FC = () => {
     ctx.fill();
     
     // Draw obstacles
-    ctx.fillStyle = 'hsl(var(--muted-foreground))';
+    ctx.fillStyle = 'hsl(var(--muted-foreground) / 0.5)';
     obstacles.forEach(obstacle => {
-        ctx.fillRect(obstacle.x * CELL_SIZE, obstacle.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        drawRoundedRect(obstacle.x * CELL_SIZE + 4, obstacle.y * CELL_SIZE + 4, CELL_SIZE - 8, CELL_SIZE - 8, 6);
     });
 
   }, [snake, food, obstacles]);
