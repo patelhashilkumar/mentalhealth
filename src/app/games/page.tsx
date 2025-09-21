@@ -6,6 +6,7 @@ import {
   ShieldCheck,
   HeartPulse,
   Workflow,
+  BrainCircuit,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -160,7 +161,12 @@ export default function GamesPage() {
             href="/games/mindquest"
             icon={<ShieldCheck className="w-8 h-8 text-primary" />}
           />
-          <GameCardPlaceholder gameTitle="Cogni-Craft" description="Engaging puzzles that challenge your logic and problem-solving abilities."/>
+          <GameCard
+            title="Memory Grid"
+            description="Test your memory with this colorful grid challenge."
+            href="/games/memory-grid"
+            icon={<BrainCircuit className="w-8 h-8 text-primary" />}
+          />
           <GameCardPlaceholder gameTitle="Mindful Manager" description="A simulation game about balancing life and work to achieve harmony."/>
         </GameSection>
       );
