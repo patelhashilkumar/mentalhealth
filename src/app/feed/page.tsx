@@ -77,7 +77,7 @@ function FeedPageContent() {
             Feed
           </h1>
         </div>
-        <Button onClick={fetchFeed} variant="outline" disabled={isLoading}>
+        <Button onClick={fetchFeed} variant="secondary" disabled={isLoading}>
           <RefreshCw
             className={cn('mr-2 h-4 w-4', isLoading && 'animate-spin')}
           />
