@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Image from 'next/image';
+import AuthGuard from '@/components/auth-guard';
 
 const feedItems = [
   {
@@ -48,7 +49,7 @@ const feedItems = [
   },
 ];
 
-export default function FeedPage() {
+function FeedPageContent() {
   return (
     <div className="flex flex-col h-screen bg-background">
       <header className="flex items-center justify-between p-4 border-b shadow-sm">
@@ -99,5 +100,13 @@ export default function FeedPage() {
         </ScrollArea>
       </main>
     </div>
+  );
+}
+
+export default function FeedPage() {
+  return (
+    <AuthGuard>
+      <FeedPageContent />
+    </AuthGuard>
   );
 }

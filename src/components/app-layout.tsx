@@ -10,6 +10,7 @@ import {
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/context/auth-context';
 
 const navItems = [
   {
@@ -41,6 +42,11 @@ const navItems = [
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { user } = useAuth();
+
+  if (!user) {
+    return <main className="flex-1">{children}</main>;
+  }
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-blue-50/50 via-white to-cyan-50/50 text-gray-800">

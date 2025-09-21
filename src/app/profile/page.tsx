@@ -11,6 +11,7 @@ import {
   ThumbsUp,
   Save,
   X,
+  LogOut,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,6 +28,8 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { cn } from '@/lib/utils';
 import { useProfile } from '@/context/profile-context';
+import { useAuth } from '@/context/auth-context';
+import AuthGuard from '@/components/auth-guard';
 
 const StatCard = ({
   value,
@@ -101,8 +104,9 @@ const TagButton = ({
   </Badge>
 );
 
-export default function ProfilePage() {
+function ProfilePageContent() {
   const { profileData, setProfileData } = useProfile();
+  const { user, logout } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [tempProfileData, setTempProfileData] = useState(profileData);
 
@@ -138,6 +142,7 @@ export default function ProfilePage() {
   };
 
   const currentData = isEditing ? tempProfileData : profileData;
+  const displayName = user?.name || profileData.name;
 
   return (
     <div className="space-y-8">
@@ -145,7 +150,7 @@ export default function ProfilePage() {
         <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
         {!isEditing && (
           <div className="text-right">
-            <p className="text-gray-600">Good morning, {profileData.name}! 👋</p>
+            <p className="text-gray-600">Good morning, {displayName}! 👋</p>
           </div>
         )}
       </header>
@@ -157,7 +162,7 @@ export default function ProfilePage() {
             <div className="flex items-center gap-5">
               <Avatar className="w-20 h-20 border-4 border-white shadow-md">
                 <AvatarFallback className="bg-pink-100 text-pink-500 text-4xl">
-                  🌸
+                  {displayName.charAt(0)}
                 </AvatarFallback>
               </Avatar>
               <div>
@@ -169,7 +174,7 @@ export default function ProfilePage() {
                   />
                 ) : (
                   <h2 className="text-2xl font-bold text-gray-900">
-                    {profileData.name}
+                    {displayName}
                   </h2>
                 )}
                 <p className="text-gray-500">{profileData.age} years old</p>
@@ -190,6 +195,14 @@ export default function ProfilePage() {
               >
                 {isEditing ? <Save /> : <Pencil />}
                 {isEditing ? 'Save Changes' : 'Edit Profile'}
+              </Button>
+               <Button
+                onClick={logout}
+                variant="destructive"
+                className="rounded-full"
+              >
+                <LogOut />
+                Logout
               </Button>
             </div>
           </div>
@@ -348,5 +361,14 @@ export default function ProfilePage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+
+export default function ProfilePage() {
+  return (
+    <AuthGuard>
+      <ProfilePageContent />
+    </AuthGuard>
   );
 }

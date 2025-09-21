@@ -19,8 +19,9 @@ import {
 } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { moodData } from '@/context/mood-context';
+import AuthGuard from '@/components/auth-guard';
 
-export default function StateOfMindPage() {
+function StateOfMindPageContent() {
   const { moods } = useMood();
   const mood = moods[0] || null;
   const [today, setToday] = useState('');
@@ -227,5 +228,14 @@ export default function StateOfMindPage() {
         )}
       </main>
     </div>
+  );
+}
+
+
+export default function StateOfMindPage() {
+  return (
+    <AuthGuard>
+      <StateOfMindPageContent />
+    </AuthGuard>
   );
 }

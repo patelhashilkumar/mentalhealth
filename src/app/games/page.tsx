@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/card';
 import { useProfile } from '@/context/profile-context';
 import { SerpentIcon } from '@/components/icons/serpent-icon';
+import AuthGuard from '@/components/auth-guard';
 
 const GameSection = ({
   title,
@@ -84,7 +85,7 @@ const GameCardPlaceholder = ({
   </Card>
 );
 
-export default function GamesPage() {
+function GamesPageContent() {
   const { profileData } = useProfile();
   const age = profileData.age;
 
@@ -211,4 +212,13 @@ export default function GamesPage() {
       </main>
     </div>
   );
+}
+
+
+export default function GamesPage() {
+  return (
+    <AuthGuard>
+      <GamesPageContent />
+    </AuthGuard>
+  )
 }

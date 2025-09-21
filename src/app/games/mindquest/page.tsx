@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import DailyCheckIn from '@/components/daily-check-in';
 import { useProfile } from '@/context/profile-context';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import AuthGuard from '@/components/auth-guard';
 
-export default function MindQuestPage() {
+function MindQuestPageContent() {
   const { profileData } = useProfile();
   
   if (!profileData.age) {
@@ -69,4 +70,13 @@ export default function MindQuestPage() {
       </main>
     </div>
   );
+}
+
+
+export default function MindQuestPage() {
+  return (
+    <AuthGuard>
+      <MindQuestPageContent />
+    </AuthGuard>
+  )
 }

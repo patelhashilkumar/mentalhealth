@@ -4,8 +4,10 @@ import Link from 'next/link';
 import ChatInterface from '@/components/chat-interface';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import AuthGuard from '@/components/auth-guard';
 
-export default function AiDocPage() {
+
+function AiDocPageContent() {
   return (
     <div className="flex flex-col h-screen bg-background">
       <header className="flex items-center justify-between p-4 border-b shadow-sm">
@@ -25,5 +27,13 @@ export default function AiDocPage() {
         <ChatInterface />
       </main>
     </div>
+  );
+}
+
+export default function AiDocPage() {
+  return (
+    <AuthGuard>
+      <AiDocPageContent />
+    </AuthGuard>
   );
 }

@@ -11,6 +11,7 @@ import { useMood } from '@/context/mood-context';
 import MoodHistory from '@/components/mood-history';
 import { useMemo } from 'react';
 import type { Mood } from '@/context/mood-context';
+import AuthGuard from '@/components/auth-guard';
 
 const SummaryCard = ({
   icon: Icon,
@@ -30,7 +31,7 @@ const SummaryCard = ({
   </Card>
 );
 
-export default function HomePage() {
+function HomePageContent() {
   const { moods } = useMood();
   const recentMood = moods[0] || null;
 
@@ -111,5 +112,13 @@ export default function HomePage() {
         </SummaryCard>
       </div>
     </div>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <AuthGuard>
+      <HomePageContent />
+    </AuthGuard>
   );
 }
