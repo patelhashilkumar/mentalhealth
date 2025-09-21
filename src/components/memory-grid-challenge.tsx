@@ -5,7 +5,7 @@ import { Card, CardContent } from './ui/card';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const GRID_SIZE = 6;
+const GRID_SIZE = 3;
 const TILE_COLORS = [
   '#ef4444', // red-500
   '#f97316', // orange-500
@@ -16,11 +16,6 @@ const TILE_COLORS = [
   '#14b8a6', // teal-500
   '#06b6d4', // cyan-500
   '#3b82f6', // blue-500
-  '#6366f1', // indigo-500
-  '#8b5cf6', // violet-500
-  '#a855f7', // purple-500
-  '#d946ef', // fuchsia-500
-  '#ec4899', // pink-500
 ];
 
 type GameState = 'start' | 'watching' | 'repeating' | 'gameover';
@@ -116,7 +111,7 @@ const MemoryGridChallenge: React.FC = () => {
 
       <Card className="p-2 bg-card/50 backdrop-blur-sm border-primary/20 shadow-lg relative overflow-hidden">
         <CardContent className="p-0">
-          <div className="grid grid-cols-6 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             {grid.map((tile) => (
               <motion.button
                 key={tile.id}
