@@ -109,7 +109,7 @@ const GameCard = ({
   <Card className="group flex flex-col overflow-hidden bg-card transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1">
     <div className="relative h-40 w-full">
       <Image
-        src={`https://picsum.photos/seed/${game.imageSeed}/600/400`}
+        src={`https://source.unsplash.com/600x400/?${game.imageHint}`}
         alt={game.title}
         fill
         className="object-cover transition-transform duration-300 group-hover:scale-105"
@@ -129,7 +129,7 @@ const GameCard = ({
     </CardHeader>
     <CardContent className="p-4 pt-0 flex-1 flex flex-col justify-end">
       <div className="flex flex-wrap gap-2 mb-4 h-5 items-center">
-        <div className="flex flex-wrap gap-2 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+        <div className="flex flex-wrap gap-2">
           {game.tags.map(tag => (
             <Badge key={tag} variant="secondary" className="text-xs">
               {tag}
@@ -162,8 +162,8 @@ const GameCard = ({
 
 function GamesPageContent() {
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <header className="flex items-center justify-between p-4 border-b">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50/50 via-white to-cyan-50/50 text-gray-800">
+      <header className="flex items-center justify-between p-4 border-b bg-transparent">
         <div className="flex items-center">
           <Button asChild variant="ghost" size="icon" className="mr-2">
             <Link href="/home">
@@ -171,7 +171,7 @@ function GamesPageContent() {
             </Link>
           </Button>
           <Gamepad2 className="w-8 h-8 mr-3 text-primary" />
-          <h1 className="text-2xl font-bold tracking-tight text-foreground font-headline">
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 font-headline">
             Games
           </h1>
         </div>
