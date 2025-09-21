@@ -30,6 +30,18 @@ import { cn } from '@/lib/utils';
 import { useProfile } from '@/context/profile-context';
 import { useAuth } from '@/context/auth-context';
 import AuthGuard from '@/components/auth-guard';
+import { useMood } from '@/context/mood-context';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 const StatCard = ({
   value,
@@ -49,8 +61,9 @@ const StatCard = ({
   </div>
 );
 
-const allInterests = ['Reading', 'Music', 'Exercise', 'Cooking', 'Gaming', 'Art', 'Travel'];
-const allStressors = ['Deadlines', 'Work', 'School', 'Health', 'Money', 'Family', 'Social'];
+const allInterests = ['Reading', 'Music', 'Exercise', 'Cooking', 'Gaming', 'Art', 'Travel', 'Movies', 'Sports', 'Writing', 'Yoga', 'Photography'];
+const allStressors = ['Deadlines', 'Work', 'School', 'Health', 'Money', 'Family', 'Social', 'Relationships', 'Future', 'Commute'];
+
 
 const InfoRow = ({ label, value }: { label: string; value: React.ReactNode }) => (
   <div className="flex justify-between items-center py-3 border-b border-gray-100 last:border-b-0">
@@ -105,8 +118,9 @@ const TagButton = ({
 );
 
 function ProfilePageContent() {
-  const { profileData, setProfileData } = useProfile();
+  const { profileData, setProfileData, resetProfile } = useProfile();
   const { user, logout } = useAuth();
+  const { moods, clearMoods } = useMood();
   const [isEditing, setIsEditing] = useState(false);
   const [tempProfileData, setTempProfileData] = useState(profileData);
 
@@ -140,6 +154,37 @@ function ProfilePageContent() {
       : [...currentTags, tag];
     setTempProfileData(prev => ({ ...prev, [field]: newTags }));
   };
+
+  const handleExportData = () => {
+    const dataToExport = {
+      profile: profileData,
+      moods: moods,
+    };
+    const dataStr = JSON.stringify(dataToExport, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'mindwell_data.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleClearData = () => {
+    resetProfile();
+    clearMoods();
+    // Also reset temp data if editing
+    setTempProfileData({
+      name: user?.name || 'User',
+      age: 0,
+      gender: 'Prefer not to say',
+      country: '',
+      sleepHours: 8,
+      interests: [],
+      stressors: [],
+    });
+  };
+
 
   const currentData = isEditing ? tempProfileData : profileData;
   const displayName = user?.name || profileData.name;
@@ -177,7 +222,7 @@ function ProfilePageContent() {
                     {displayName}
                   </h2>
                 )}
-                <p className="text-gray-500">{profileData.age} years old</p>
+                <p className="text-gray-500">{profileData.age > 0 ? `${profileData.age} years old` : 'Age not set'}</p>
                 <p className="text-xs text-gray-400 mt-1">
                   Member since 9/21/2025
                 </p>
@@ -207,7 +252,7 @@ function ProfilePageContent() {
             </div>
           </div>
           <div className="mt-6 grid grid-cols-3 gap-4 text-center">
-            <StatCard value="1" label="Days Logged" icon={Calendar} />
+            <StatCard value={moods.length.toString()} label="Days Logged" icon={Calendar} />
             <StatCard value="3.7/10" label="Average Mood" icon={BarChart2} />
             <StatCard value="2" label="Activities Completed" icon={ThumbsUp} />
           </div>
@@ -279,9 +324,9 @@ function ProfilePageContent() {
               </>
             ) : (
               <>
-                <InfoRow label="Age" value={`${profileData.age} years old`} />
-                <InfoRow label="Gender" value={profileData.gender} />
-                <InfoRow label="Country" value={profileData.country} />
+                <InfoRow label="Age" value={profileData.age > 0 ? `${profileData.age} years old` : 'Not set'} />
+                <InfoRow label="Gender" value={profileData.gender || 'Not set'} />
+                <InfoRow label="Country" value={profileData.country || 'Not set'} />
                 <InfoRow
                   label="Sleep Hours"
                   value={`${profileData.sleepHours} hours / night`}
@@ -299,7 +344,7 @@ function ProfilePageContent() {
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-2">
-            {allInterests.map(interest => (
+            {(isEditing ? allInterests : profileData.interests).map(interest => (
               <TagButton
                 key={interest}
                 label={interest}
@@ -312,6 +357,9 @@ function ProfilePageContent() {
                 }
               />
             ))}
+             {!isEditing && profileData.interests.length === 0 && (
+              <p className="text-muted-foreground text-sm">No interests selected.</p>
+            )}
           </CardContent>
         </Card>
 
@@ -323,7 +371,7 @@ function ProfilePageContent() {
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-2">
-            {allStressors.map(stressor => (
+            {(isEditing ? allStressors : profileData.stressors).map(stressor => (
               <TagButton
                 key={stressor}
                 label={stressor}
@@ -337,6 +385,9 @@ function ProfilePageContent() {
                 }
               />
             ))}
+             {!isEditing && profileData.stressors.length === 0 && (
+              <p className="text-muted-foreground text-sm">No stressors selected.</p>
+            )}
           </CardContent>
         </Card>
 
@@ -348,15 +399,34 @@ function ProfilePageContent() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button variant="outline" className="w-full justify-start">
+            <Button variant="outline" className="w-full justify-start" onClick={handleExportData}>
               <Download className="mr-2 h-4 w-4" /> Export My Data (JSON)
             </Button>
-            <Button
-              variant="destructive"
-              className="w-full justify-start bg-red-500 text-white hover:bg-red-600"
-            >
-              <Trash2 className="mr-2 h-4 w-4" /> Clear All Data
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="destructive"
+                  className="w-full justify-start bg-red-500 text-white hover:bg-red-600"
+                >
+                  <Trash2 className="mr-2 h-4 w-4" /> Clear All Data
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete all your
+                    profile and mood data.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleClearData}>
+                    Yes, delete everything
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </CardContent>
         </Card>
       </div>

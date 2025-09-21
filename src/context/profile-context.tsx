@@ -6,6 +6,7 @@ import React, {
   useContext,
   ReactNode,
   useMemo,
+  useCallback,
 } from 'react';
 
 // Define the shape of the profile data
@@ -22,6 +23,17 @@ type ProfileData = {
 type ProfileContextType = {
   profileData: ProfileData;
   setProfileData: (profileData: ProfileData) => void;
+  resetProfile: () => void;
+};
+
+const initialProfileData: ProfileData = {
+  name: 'Anvesha',
+  age: 21,
+  gender: 'Female',
+  country: 'India',
+  sleepHours: 7,
+  interests: ['Reading', 'Music', 'Exercise'],
+  stressors: ['Deadlines', 'Work', 'School'],
 };
 
 // Create the context with a default value
@@ -29,19 +41,23 @@ const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
 // Define the provider component
 export function ProfileProvider({ children }: { children: ReactNode }) {
-  const [profileData, setProfileData] = useState<ProfileData>({
-    name: 'Anvesha',
-    age: 21,
-    gender: 'Female',
-    country: 'India',
-    sleepHours: 7,
-    interests: ['Reading', 'Music', 'Exercise'],
-    stressors: ['Deadlines', 'Work', 'School'],
-  });
+  const [profileData, setProfileData] = useState<ProfileData>(initialProfileData);
+
+  const resetProfile = useCallback(() => {
+    setProfileData({
+      name: 'User',
+      age: 0,
+      gender: 'Prefer not to say',
+      country: '',
+      sleepHours: 8,
+      interests: [],
+      stressors: [],
+    });
+  }, []);
 
   const value = useMemo(
-    () => ({ profileData, setProfileData }),
-    [profileData]
+    () => ({ profileData, setProfileData, resetProfile }),
+    [profileData, resetProfile]
   );
 
   return (

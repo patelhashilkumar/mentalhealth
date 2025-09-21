@@ -28,6 +28,7 @@ export type Mood = {
 type MoodContextType = {
   moods: Mood[];
   addMood: (mood: Omit<Mood, 'date'>) => void;
+  clearMoods: () => void;
 };
 
 const MoodContext = createContext<MoodContextType | undefined>(undefined);
@@ -40,7 +41,12 @@ export function MoodProvider({ children }: { children: ReactNode }) {
     setMoods(prevMoods => [newMood, ...prevMoods]);
   }, []);
 
-  const value = useMemo(() => ({ moods, addMood }), [moods, addMood]);
+  const clearMoods = useCallback(() => {
+    setMoods([]);
+  }, []);
+
+
+  const value = useMemo(() => ({ moods, addMood, clearMoods }), [moods, addMood, clearMoods]);
 
   return <MoodContext.Provider value={value}>{children}</MoodContext.Provider>;
 }
