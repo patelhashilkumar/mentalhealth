@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -15,9 +15,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
-import { Sun, Moon, Sparkles, Flame } from 'lucide-react';
+import { Sun, Moon, Sparkles, Flame, RefreshCw } from 'lucide-react';
 import { useMood } from '@/context/mood-context';
-import { isToday, isYesterday, differenceInCalendarDays } from 'date-fns';
+import { getAiDailyQuestion } from '@/app/actions';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const moodOptions = [
   { emoji: '😠', label: 'Very Unpleasant' },
@@ -31,31 +32,36 @@ export default function DailyCheckIn() {
   const { addMood } = useMood();
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [sleepHours, setSleepHours] = useState([8]);
-  const [gratitudeNote, setGratitudeNote] = useState('');
+  const [journalEntry, setJournalEntry] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [streak, setStreak] = useState(0);
 
-  useEffect(() => {
-    const savedStreak = localStorage.getItem('mindquest_streak');
-    const lastCheckin = localStorage.getItem('mindquest_last_checkin');
-    
-    let currentStreak = savedStreak ? parseInt(savedStreak, 10) : 0;
-    setStreak(currentStreak);
+  const [aiQuestion, setAiQuestion] = useState<string | null>(null);
+  const [isLoadingQuestion, setIsLoadingQuestion] = useState(true);
 
-    if (lastCheckin) {
-      const lastCheckinDate = new Date(parseInt(lastCheckin, 10));
-      if (isToday(lastCheckinDate)) {
-        setSubmitted(true);
-      } else if (!isYesterday(lastCheckinDate)) {
-        // If the last check-in was not today or yesterday, the streak is broken.
-        const daysSince = differenceInCalendarDays(new Date(), lastCheckinDate);
-        if (daysSince > 1) {
-            setStreak(0);
-            localStorage.setItem('mindquest_streak', '0');
-        }
-      }
-    }
+  const fetchQuestion = useCallback(async () => {
+    setIsLoadingQuestion(true);
+    setAiQuestion(null);
+    const { question } = await getAiDailyQuestion();
+    setAiQuestion(question);
+    setIsLoadingQuestion(false);
   }, []);
+
+  useEffect(() => {
+    // Load initial streak from local storage
+    const savedStreak = localStorage.getItem('mindquest_streak');
+    setStreak(savedStreak ? parseInt(savedStreak, 10) : 0);
+    // Fetch initial question
+    fetchQuestion();
+  }, [fetchQuestion]);
+
+  const resetForm = useCallback(() => {
+    setSelectedMood(null);
+    setSleepHours([8]);
+    setJournalEntry('');
+    setSubmitted(false);
+    fetchQuestion();
+  }, [fetchQuestion]);
 
   const handleSubmit = () => {
     if (!selectedMood) {
@@ -72,32 +78,14 @@ export default function DailyCheckIn() {
       addMood({name: selectedMoodObj.label, emoji: selectedMoodObj.emoji});
     }
 
-    const now = new Date();
-    const lastCheckin = localStorage.getItem('mindquest_last_checkin');
-    let currentStreak = streak;
-
-    if (lastCheckin) {
-        const lastCheckinDate = new Date(parseInt(lastCheckin, 10));
-        if (isYesterday(lastCheckinDate)) {
-            // Continued the streak
-            currentStreak += 1;
-        } else if (!isToday(lastCheckinDate)) {
-            // Missed a day or more, reset streak
-            currentStreak = 1;
-        }
-    } else {
-        // First check-in ever
-        currentStreak = 1;
-    }
-
-    setStreak(currentStreak);
-    localStorage.setItem('mindquest_streak', currentStreak.toString());
-    localStorage.setItem('mindquest_last_checkin', now.getTime().toString());
+    const newStreak = streak + 1;
+    setStreak(newStreak);
+    localStorage.setItem('mindquest_streak', newStreak.toString());
 
     setSubmitted(true);
     toast({
       title: 'Check-In Complete!',
-      description: `Your streak is now ${currentStreak}. Keep it up!`,
+      description: `Your streak is now ${newStreak}. Keep it up!`,
     });
   };
 
@@ -115,14 +103,16 @@ export default function DailyCheckIn() {
         <Card className="text-center bg-card/80 animate-in fade-in-50">
           <CardHeader>
             <CardTitle className="text-2xl font-headline">
-              Checked in for today!
+              Check-In Logged!
             </CardTitle>
             <CardDescription>
-              Great job maintaining your streak. Come back tomorrow to continue your MindQuest.
+              Great job on maintaining your focus. Ready for another round?
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Sparkles className="w-16 h-16 mx-auto text-primary animate-pulse" />
+            <Button onClick={resetForm}>
+                <RefreshCw className="mr-2" /> Start New Check-In
+            </Button>
           </CardContent>
         </Card>
       ) : (
@@ -188,18 +178,27 @@ export default function DailyCheckIn() {
               </p>
             </div>
 
-            {/* Gratitude Journal */}
+            {/* AI-Generated Question */}
             <div className="space-y-4">
-              <Label htmlFor="gratitude" className="text-lg font-medium">
-                3. What are you grateful for today? (Optional)
-              </Label>
-              <Textarea
-                id="gratitude"
-                placeholder="A warm cup of coffee, a call with a friend..."
-                value={gratitudeNote}
-                onChange={(e) => setGratitudeNote(e.target.value)}
-                className="bg-background"
-              />
+              {isLoadingQuestion ? (
+                <>
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-20 w-full" />
+                </>
+              ) : (
+                <>
+                  <Label htmlFor="ai-question" className="text-lg font-medium flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-primary" /> 3. {aiQuestion}
+                  </Label>
+                  <Textarea
+                    id="ai-question"
+                    placeholder="Take a moment to reflect..."
+                    value={journalEntry}
+                    onChange={(e) => setJournalEntry(e.target.value)}
+                    className="bg-background"
+                  />
+                </>
+              )}
             </div>
           </CardContent>
           <CardFooter>

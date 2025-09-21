@@ -6,6 +6,8 @@ import { getMoodInsight } from '@/ai/flows/mood-insights';
 import type { MoodInsightOutput } from '@/ai/flows/mood-insights';
 import { getMoodSummary } from '@/ai/flows/mood-summary';
 import type { MoodSummaryInput, MoodSummaryOutput } from '@/ai/flows/mood-summary';
+import { getDailyQuestion } from '@/ai/flows/daily-question';
+import type { DailyQuestionOutput } from '@/ai/flows/daily-question';
 
 
 export async function getAiReply(
@@ -53,5 +55,18 @@ export async function getAiMoodSummary(
   } catch (error) {
     console.error('Error getting AI mood summary:', error);
     throw new Error('Failed to get a response from the AI assistant.');
+  }
+}
+
+export async function getAiDailyQuestion(): Promise<DailyQuestionOutput> {
+  try {
+    const result = await getDailyQuestion();
+    return result;
+  } catch (error) {
+    console.error('Error getting AI daily question:', error);
+    // Return a fallback question in case of an error
+    return {
+      question: 'What is one thing you are grateful for today?',
+    };
   }
 }
