@@ -47,6 +47,27 @@ const SnakeGame: React.FC = () => {
   const [speed, setSpeed] = useState<number | null>(200);
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
+  const [themeColors, setThemeColors] = useState({
+    primary: '#000',
+    destructive: '#000',
+    mutedForeground: '#000',
+    background: '#fff',
+    card: '#fff'
+  });
+
+  useEffect(() => {
+    // We need to get the computed styles to use CSS variables in canvas
+    if (typeof window !== 'undefined') {
+      const computedStyle = getComputedStyle(document.documentElement);
+      setThemeColors({
+        primary: computedStyle.getPropertyValue('--primary').trim(),
+        destructive: computedStyle.getPropertyValue('--destructive').trim(),
+        mutedForeground: computedStyle.getPropertyValue('--muted-foreground').trim(),
+        background: computedStyle.getPropertyValue('--background').trim(),
+        card: computedStyle.getPropertyValue('--card').trim(),
+      });
+    }
+  }, []);
 
   const resetGame = useCallback(() => {
     const initialSnake = [{ x: 10, y: 10 }];
@@ -60,6 +81,12 @@ const SnakeGame: React.FC = () => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (speed === null) { // Game over, 'r' to restart
+        if (e.key.toLowerCase() === 'r') {
+          resetGame();
+        }
+        return;
+      }
       switch (e.key) {
         case 'ArrowUp':
           if (direction.y === 0) setDirection({ x: 0, y: -1 });
@@ -77,7 +104,7 @@ const SnakeGame: React.FC = () => {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [direction]);
+  }, [direction, speed, resetGame]);
 
   useEffect(() => {
     if (gameOver) {
@@ -99,8 +126,8 @@ const SnakeGame: React.FC = () => {
         }
 
         // Self collision
-        for (const segment of newSnake) {
-          if (head.x === segment.x && head.y === segment.y) {
+        for (let i = 1; i < newSnake.length; i++) {
+          if (head.x === newSnake[i].x && head.y === newSnake[i].y) {
             setGameOver(true);
             return prevSnake;
           }
@@ -120,6 +147,8 @@ const SnakeGame: React.FC = () => {
         if (head.x === food.x && head.y === food.y) {
           setScore(s => s + 10);
           setFood(getRandomCoordinate(newSnake));
+          // Increase speed slightly
+          setSpeed(s => Math.max(50, (s || 200) * 0.95));
         } else {
           newSnake.pop();
         }
@@ -137,7 +166,8 @@ const SnakeGame: React.FC = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    ctx.fillStyle = `hsl(${themeColors.background})`;
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     
     const drawRoundedRect = (x: number, y: number, width: number, height: number, radius: number) => {
         ctx.beginPath();
@@ -157,26 +187,33 @@ const SnakeGame: React.FC = () => {
     // Draw snake
     snake.forEach((segment, index) => {
         if (index === 0) {
-            ctx.fillStyle = 'hsl(var(--primary) / 0.8)';
+            ctx.fillStyle = `hsl(${themeColors.primary})`; // Head color
         } else {
-            ctx.fillStyle = 'hsl(var(--primary))';
+             const opacity = 1 - (index / snake.length) * 0.5;
+            ctx.fillStyle = `hsla(${themeColors.primary}, ${opacity})`; // Tail color with gradient
         }
       drawRoundedRect(segment.x * CELL_SIZE + 2, segment.y * CELL_SIZE + 2, CELL_SIZE - 4, CELL_SIZE - 4, 8);
     });
 
-    // Draw food
-    ctx.fillStyle = 'hsl(var(--destructive))';
+    // Draw food (apple)
+    const foodX = food.x * CELL_SIZE + CELL_SIZE / 2;
+    const foodY = food.y * CELL_SIZE + CELL_SIZE / 2;
+    ctx.fillStyle = `hsl(${themeColors.destructive})`;
     ctx.beginPath();
-    ctx.arc(food.x * CELL_SIZE + CELL_SIZE / 2, food.y * CELL_SIZE + CELL_SIZE / 2, CELL_SIZE / 2.5, 0, 2 * Math.PI);
+    ctx.arc(foodX, foodY, CELL_SIZE / 2.5, 0, 2 * Math.PI);
     ctx.fill();
-    
+    // Tiny leaf for apple
+    ctx.fillStyle = 'green';
+    ctx.fillRect(foodX - 1, foodY - CELL_SIZE/2, 2, 5);
+
+
     // Draw obstacles
-    ctx.fillStyle = 'hsl(var(--muted-foreground) / 0.5)';
+    ctx.fillStyle = `hsla(${themeColors.mutedForeground}, 0.5)`;
     obstacles.forEach(obstacle => {
         drawRoundedRect(obstacle.x * CELL_SIZE + 4, obstacle.y * CELL_SIZE + 4, CELL_SIZE - 8, CELL_SIZE - 8, 6);
     });
 
-  }, [snake, food, obstacles]);
+  }, [snake, food, obstacles, themeColors]);
 
   return (
     <div className="flex flex-col items-center gap-4">
@@ -187,7 +224,7 @@ const SnakeGame: React.FC = () => {
             ref={canvasRef}
             width={CANVAS_WIDTH}
             height={CANVAS_HEIGHT}
-            className="rounded-md bg-background"
+            className="rounded-md"
           />
           {gameOver && (
             <div className="absolute inset-0 bg-background/80 flex items-center justify-center">
