@@ -5,6 +5,7 @@ import {
   MessageSquare,
   Activity,
   User,
+  Gamepad2,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -27,6 +28,11 @@ const navItems = [
     icon: Activity,
   },
   {
+    name: 'Games',
+    href: '/games',
+    icon: Gamepad2,
+  },
+  {
     name: 'Profile',
     href: '/profile',
     icon: User,
@@ -47,7 +53,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </Link>
           <nav className="flex flex-col gap-2">
             {navItems.map(item => {
-              const isActive = pathname === item.href;
+              const isActive = pathname.startsWith(item.href);
               return (
                 <Button
                   key={item.name}

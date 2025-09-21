@@ -5,7 +5,6 @@ import {
   Play,
   ShieldCheck,
   HeartPulse,
-  Bird,
   Workflow,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -107,7 +106,7 @@ export default function GamesPage() {
 
     if (age >= 12 && age <= 17) {
       return (
-        <GameSection title="Games for ages 12-17">
+        <GameSection title="Games for Teens (12-17)">
           <GameCard
             title="Mindful Maze"
             description="A calming puzzle game where you collect positive thoughts."
@@ -126,7 +125,7 @@ export default function GamesPage() {
       );
     } else if (age >= 18 && age <= 25) {
       return (
-        <GameSection title="Games for ages 18-25">
+        <GameSection title="Games for Young Adults (18-25)">
           <GameCard
             title="MindQuest"
             description="Adventure RPG to relieve stress and connect with others."
@@ -139,23 +138,23 @@ export default function GamesPage() {
             href="/games/pulserunner"
             icon={<HeartPulse className="w-8 h-8 text-primary" />}
           />
-          <GameCardPlaceholder gameTitle="Zenith Zone" />
+          <GameCardPlaceholder gameTitle="Zenith Zone" description="A competitive strategy game that sharpens focus and decision-making skills."/>
         </GameSection>
       );
-    } else if (age >= 26 && age <= 40) {
+    } else if (age >= 26 && age <= 59) {
       return (
-        <GameSection title="Games for ages 26-40">
-          <GameCardPlaceholder gameTitle="Cogni-Craft" />
-          <GameCardPlaceholder gameTitle="Mindful Manager" />
-          <GameCardPlaceholder gameTitle="Pattern Puzzles" />
+        <GameSection title="Games for Adults (26-59)">
+          <GameCardPlaceholder gameTitle="Cogni-Craft" description="Engaging puzzles that challenge your logic and problem-solving abilities."/>
+          <GameCardPlaceholder gameTitle="Mindful Manager" description="A simulation game about balancing life and work to achieve harmony."/>
+          <GameCardPlaceholder gameTitle="Pattern Puzzles" description="Relax and solve intricate pattern-based puzzles."/>
         </GameSection>
       );
     } else {
       return (
-        <GameSection title="Games for ages 40+">
-          <GameCardPlaceholder gameTitle="Serene Sudoku" />
-          <GameCardPlaceholder gameTitle="Memory Lane" />
-          <GameCardPlaceholder gameTitle="Calm Crosswords" />
+        <GameSection title="Games for Seniors (60+)">
+          <GameCardPlaceholder gameTitle="Serene Sudoku" description="A calm and classic Sudoku experience with beautiful themes." />
+          <GameCardPlaceholder gameTitle="Memory Lane" description="A gentle game to reminisce and train your memory."/>
+          <GameCardPlaceholder gameTitle="Calm Crosswords" description="Peaceful crossword puzzles with varying difficulty levels."/>
         </GameSection>
       );
     }
