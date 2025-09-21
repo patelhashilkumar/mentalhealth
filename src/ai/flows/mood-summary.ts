@@ -20,7 +20,7 @@ const ProfileSchema = z.object({
   stressors: z.array(z.string()),
 });
 
-export const MoodSummaryInputSchema = z.object({
+const MoodSummaryInputSchema = z.object({
   mood: z.string().describe('The mood logged by the user (e.g., "Pleasant", "Unpleasant", "Neutral").'),
   profile: ProfileSchema.describe('The user\'s profile data.'),
 });
@@ -31,7 +31,7 @@ const WellnessTipSchema = z.object({
   description: z.string().describe('A brief explanation of the wellness tip.'),
 });
 
-export const MoodSummaryOutputSchema = z.object({
+const MoodSummaryOutputSchema = z.object({
   summary: z
     .string()
     .describe('A personalized, 1-2 sentence summary of the user\'s mood, taking their profile into account.'),
