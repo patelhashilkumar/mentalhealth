@@ -140,10 +140,10 @@ const MemoryGridChallenge: React.FC = () => {
           <AnimatePresence>
             {gameState !== 'repeating' && gameState !== 'watching' && (
               <motion.div
-                initial={{ backdropFilter: 'blur(0px)', opacity: 0 }}
-                animate={{ backdropFilter: 'blur(8px)', opacity: 1 }}
-                exit={{ backdropFilter: 'blur(0px)', opacity: 0 }}
-                className="absolute inset-0 flex items-center justify-center bg-background/70"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 flex items-center justify-center bg-background/70 backdrop-blur-sm"
               >
                 {gameState === 'start' && (
                   <div className="text-center">
