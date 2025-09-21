@@ -116,6 +116,12 @@ export default function GamesPage() {
       return (
         <GameSection title="Games for Teens (12-17)">
           <GameCard
+            title="MindQuest"
+            description="Adventure RPG to relieve stress and connect with others."
+            href="/games/mindquest"
+            icon={<ShieldCheck className="w-8 h-8 text-primary" />}
+          />
+          <GameCard
             title="Mindful Maze"
             description="A calming puzzle game where you collect positive thoughts."
             href="/games/mindful-maze"
@@ -124,10 +130,6 @@ export default function GamesPage() {
           <GameCardPlaceholder
             gameTitle="Echo Grove"
             description="A creative space to turn your feelings into a beautiful, growing forest."
-          />
-          <GameCardPlaceholder
-            gameTitle="Starlight Journey"
-            description="An adventure where you restore light to the stars by overcoming challenges."
           />
         </GameSection>
       );
@@ -152,14 +154,25 @@ export default function GamesPage() {
     } else if (age >= 26 && age <= 59) {
       return (
         <GameSection title="Games for Adults (26-59)">
+           <GameCard
+            title="MindQuest"
+            description="Adventure RPG to relieve stress and connect with others."
+            href="/games/mindquest"
+            icon={<ShieldCheck className="w-8 h-8 text-primary" />}
+          />
           <GameCardPlaceholder gameTitle="Cogni-Craft" description="Engaging puzzles that challenge your logic and problem-solving abilities."/>
           <GameCardPlaceholder gameTitle="Mindful Manager" description="A simulation game about balancing life and work to achieve harmony."/>
-          <GameCardPlaceholder gameTitle="Pattern Puzzles" description="Relax and solve intricate pattern-based puzzles."/>
         </GameSection>
       );
     } else {
       return (
         <GameSection title="Games for Seniors (60+)">
+           <GameCard
+            title="MindQuest"
+            description="Adventure RPG to relieve stress and connect with others."
+            href="/games/mindquest"
+            icon={<ShieldCheck className="w-8 h-8 text-primary" />}
+          />
            <GameCard
             title="Serene Serpent"
             description="A classic snake game with a calm and relaxing twist."
@@ -167,7 +180,6 @@ export default function GamesPage() {
             icon={<SerpentIcon className="w-8 h-8 text-primary" />}
           />
           <GameCardPlaceholder gameTitle="Memory Lane" description="A gentle game to reminisce and train your memory."/>
-          <GameCardPlaceholder gameTitle="Calm Crosswords" description="Peaceful crossword puzzles with varying difficulty levels."/>
         </GameSection>
       );
     }
