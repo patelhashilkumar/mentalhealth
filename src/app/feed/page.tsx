@@ -90,14 +90,17 @@ function FeedPageContent() {
             <FeedSkeleton />
           ) : (
             <div className="grid grid-cols-1 gap-8 p-6 md:grid-cols-2 lg:grid-cols-3">
-              {feedItems.map((item, index) => (
+              {feedItems.map((item) => (
                 <div
                   key={item.id}
                   className="flex flex-col overflow-hidden transition-all duration-300 bg-card border rounded-lg shadow-sm hover:scale-105 hover:shadow-primary/20"
                 >
                   <div className="relative w-full h-48">
                     <Image
-                      src={`https://picsum.photos/seed/feed${index + 1}/${item.id}/600/400`}
+                      src={`https://picsum.photos/seed/${item.imageHint.replace(
+                        ' ',
+                        ''
+                      )}/600/400`}
                       alt={item.title}
                       fill
                       className="object-cover"
