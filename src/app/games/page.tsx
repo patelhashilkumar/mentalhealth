@@ -18,6 +18,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useProfile } from '@/context/profile-context';
+import { SerpentIcon } from '@/components/icons/serpent-icon';
 
 const GameSection = ({
   title,
@@ -159,7 +160,12 @@ export default function GamesPage() {
     } else {
       return (
         <GameSection title="Games for Seniors (60+)">
-          <GameCardPlaceholder gameTitle="Serene Sudoku" description="A calm and classic Sudoku experience with beautiful themes." />
+           <GameCard
+            title="Serene Serpent"
+            description="A classic snake game with a calm and relaxing twist."
+            href="/games/serene-serpent"
+            icon={<SerpentIcon className="w-8 h-8 text-primary" />}
+          />
           <GameCardPlaceholder gameTitle="Memory Lane" description="A gentle game to reminisce and train your memory."/>
           <GameCardPlaceholder gameTitle="Calm Crosswords" description="Peaceful crossword puzzles with varying difficulty levels."/>
         </GameSection>
