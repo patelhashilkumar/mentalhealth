@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Info, ArrowRight } from 'lucide-react';
 
@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const feelings = [
   'Content',
@@ -48,7 +49,7 @@ const FeelingButton = ({
   </Button>
 );
 
-export default function MoodDetailsPage() {
+function MoodDetailsPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const mood = searchParams.get('mood') || 'Neutral';
@@ -149,5 +150,40 @@ export default function MoodDetailsPage() {
         </Button>
       </footer>
     </div>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <div className="flex flex-col h-screen bg-background text-foreground">
+      <header className="flex items-center justify-between p-4">
+        <Skeleton className="h-8 w-24" />
+        <Skeleton className="h-8 w-20" />
+      </header>
+      <main className="flex-1 flex flex-col items-center px-4 pt-8">
+        <Skeleton className="w-48 h-48 rounded-full" />
+        <Skeleton className="h-10 w-40 mt-6" />
+        <div className="w-full max-w-md mt-12 space-y-4">
+          <Skeleton className="h-6 w-3/4" />
+          <div className="flex flex-wrap gap-3">
+            <Skeleton className="h-10 w-24 rounded-full" />
+            <Skeleton className="h-10 w-20 rounded-full" />
+            <Skeleton className="h-10 w-28 rounded-full" />
+            <Skeleton className="h-10 w-24 rounded-full" />
+          </div>
+        </div>
+      </main>
+      <footer className="p-4 text-center border-t border-border/10">
+        <Skeleton className="h-12 w-40 rounded-full mx-auto" />
+      </footer>
+    </div>
+  );
+}
+
+export default function MoodDetailsPage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <MoodDetailsPageContent />
+    </Suspense>
   );
 }
