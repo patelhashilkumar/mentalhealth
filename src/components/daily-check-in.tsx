@@ -17,6 +17,7 @@ import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
 import { Sun, Moon, Sparkles, Flame } from 'lucide-react';
 import { useMood } from '@/context/mood-context';
+import { isToday, isYesterday, differenceInCalendarDays } from 'date-fns';
 
 const moodOptions = [
   { emoji: '😠', label: 'Very Unpleasant' },
@@ -38,27 +39,20 @@ export default function DailyCheckIn() {
     const savedStreak = localStorage.getItem('mindquest_streak');
     const lastCheckin = localStorage.getItem('mindquest_last_checkin');
     
-    if (savedStreak) {
-      if (lastCheckin) {
-        const lastCheckinDate = new Date(parseInt(lastCheckin));
-        const now = new Date();
-        const diffHours = (now.getTime() - lastCheckinDate.getTime()) / (1000 * 60 * 60);
+    let currentStreak = savedStreak ? parseInt(savedStreak, 10) : 0;
+    setStreak(currentStreak);
 
-        if (diffHours > 48) {
-          // If it's been more than 2 days, reset streak.
-          setStreak(0);
-          localStorage.setItem('mindquest_streak', '0');
-        } else if (diffHours > 24) {
-          // Checked in yesterday, today's checkin will continue the streak, but for now show current streak.
-          setStreak(parseInt(savedStreak));
+    if (lastCheckin) {
+      const lastCheckinDate = new Date(parseInt(lastCheckin, 10));
+      if (isToday(lastCheckinDate)) {
+        setSubmitted(true);
+      } else if (!isYesterday(lastCheckinDate)) {
+        // If the last check-in was not today or yesterday, the streak is broken.
+        const daysSince = differenceInCalendarDays(new Date(), lastCheckinDate);
+        if (daysSince > 1) {
+            setStreak(0);
+            localStorage.setItem('mindquest_streak', '0');
         }
-        else {
-          // Already checked in today.
-          setStreak(parseInt(savedStreak));
-          setSubmitted(true);
-        }
-      } else {
-         setStreak(parseInt(savedStreak));
       }
     }
   }, []);
@@ -83,15 +77,17 @@ export default function DailyCheckIn() {
     let currentStreak = streak;
 
     if (lastCheckin) {
-        const lastCheckinDate = new Date(parseInt(lastCheckin));
-        const diffHours = (now.getTime() - lastCheckinDate.getTime()) / (1000 * 60 * 60);
-        if (diffHours > 24 && diffHours <= 48) {
+        const lastCheckinDate = new Date(parseInt(lastCheckin, 10));
+        if (isYesterday(lastCheckinDate)) {
+            // Continued the streak
             currentStreak += 1;
-        } else if (diffHours > 48) {
-            currentStreak = 1; // Reset streak
+        } else if (!isToday(lastCheckinDate)) {
+            // Missed a day or more, reset streak
+            currentStreak = 1;
         }
     } else {
-        currentStreak = 1; // First check-in
+        // First check-in ever
+        currentStreak = 1;
     }
 
     setStreak(currentStreak);
