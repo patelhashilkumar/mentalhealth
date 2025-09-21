@@ -33,6 +33,37 @@ const LoadingDots = () => (
   </div>
 );
 
+const AiMessageContent = ({ content }: { content: AIHealthConsultationOutput }) => {
+  if (content.recommendations && content.recommendations.length > 0) {
+    return (
+      <Table className="table-auto w-full">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-1/3">Condition</TableHead>
+            <TableHead className="w-1/3">Description (Key Symptoms)</TableHead>
+            <TableHead className="w-1/3">Advice</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {content.recommendations.map((rec, index) => (
+            <TableRow key={index} className="border-border">
+              <TableCell className="font-medium">{rec.condition}</TableCell>
+              <TableCell>{rec.description}</TableCell>
+              <TableCell>{rec.advice}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    );
+  }
+
+  if (content.response) {
+    return <p className="whitespace-pre-wrap text-sm">{content.response}</p>;
+  }
+
+  return <p className="text-sm text-muted-foreground">The AI assistant did not provide a valid response.</p>;
+};
+
 export default function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -138,30 +169,7 @@ export default function ChatInterface() {
                   <p className="whitespace-pre-wrap text-sm">{message.content as string}</p>
                 ) : (
                   <div className="space-y-4">
-                    <Table className="table-auto w-full">
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-1/3">Condition</TableHead>
-                          <TableHead className="w-1/3">
-                            Description (Key Symptoms)
-                          </TableHead>
-                          <TableHead className="w-1/3">Advice</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {(
-                          message.content as AIHealthConsultationOutput
-                        ).recommendations.map((rec, index) => (
-                          <TableRow key={index} className="border-border">
-                            <TableCell className="font-medium">
-                              {rec.condition}
-                            </TableCell>
-                            <TableCell>{rec.description}</TableCell>
-                            <TableCell>{rec.advice}</TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
+                    <AiMessageContent content={message.content as AIHealthConsultationOutput} />
                   </div>
                 )}
               </div>

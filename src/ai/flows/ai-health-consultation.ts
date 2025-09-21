@@ -22,7 +22,8 @@ const RecommendationSchema = z.object({
 });
 
 const AIHealthConsultationOutputSchema = z.object({
-  recommendations: z.array(RecommendationSchema).describe('A list of recommendations and advice.'),
+  response: z.string().optional().describe('A conversational response from the AI psychiatrist.'),
+  recommendations: z.array(RecommendationSchema).optional().describe('A list of recommendations and advice in a tabular format.'),
 });
 export type AIHealthConsultationOutput = z.infer<typeof AIHealthConsultationOutputSchema>;
 
@@ -34,7 +35,11 @@ const prompt = ai.definePrompt({
   name: 'aiHealthConsultationPrompt',
   input: {schema: AIHealthConsultationInputSchema},
   output: {schema: AIHealthConsultationOutputSchema},
-  prompt: `You are a helpful AI assistant providing medical advice. Please answer the following medical query with doctor-like responses and medical recommendations. Structure your response as a list of recommendations with a condition, description, and advice for each.\n\nQuery: {{{query}}}`,
+  prompt: `You are an expert AI psychiatrist with over 30 years of experience and have successfully treated thousands of patients. Engage in a supportive and empathetic conversation.
+
+If the user's query is about a specific disease, provide the information in a tabular format using the 'recommendations' field. Otherwise, provide a conversational response using the 'response' field.
+
+Query: {{{query}}}`,
 });
 
 const aiHealthConsultationFlow = ai.defineFlow(
