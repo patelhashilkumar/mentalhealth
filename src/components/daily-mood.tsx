@@ -1,18 +1,16 @@
 'use client';
-import { type Mood } from '@/context/mood-context';
+import { type Mood, moodData } from '@/context/mood-context';
 
-const moodColors: { [key: string]: string } = {
-  'Very Unpleasant': '#ff6b6b',
-  Unpleasant: '#ff8e72',
-  'Slightly Unpleasant': '#ffb37c',
-  Neutral: '#a9b7c1',
-  'Slightly Pleasant': '#87d0a2',
-  Pleasant: '#62dca5',
-  'Very Pleasant': '#2ce69b',
-};
+const moodColors: { [key: string]: string } = moodData.reduce(
+  (acc: { [key: string]: string }, mood) => {
+    acc[mood.name] = mood.color;
+    return acc;
+  },
+  {}
+);
 
 const DailyMood = ({ mood }: { mood: Mood | null }) => {
-  const color = mood ? moodColors[mood.name] : moodColors['Neutral'];
+  const color = mood ? moodColors[mood.name] : 'hsl(var(--muted))';
 
   return (
     <div className="relative flex items-center justify-center w-40 h-40">

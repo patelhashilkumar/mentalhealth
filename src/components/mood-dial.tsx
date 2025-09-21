@@ -5,27 +5,7 @@ import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { useMood } from '@/context/mood-context';
-
-const moods = [
-  { name: 'Very Unpleasant', emoji: '😠', color: 'hsl(0, 84%, 60%)', value: 0 },
-  { name: 'Unpleasant', emoji: '😟', color: 'hsl(30, 84%, 60%)', value: 1 },
-  {
-    name: 'Slightly Unpleasant',
-    emoji: '😕',
-    color: 'hsl(60, 84%, 60%)',
-    value: 2,
-  },
-  { name: 'Neutral', emoji: '😐', color: 'hsl(240, 5%, 65%)', value: 3 },
-  {
-    name: 'Slightly Pleasant',
-    emoji: '🙂',
-    color: 'hsl(120, 60%, 65%)',
-    value: 4,
-  },
-  { name: 'Pleasant', emoji: '😊', color: 'hsl(140, 60%, 60%)', value: 5 },
-  { name: 'Very Pleasant', emoji: '😄', color: 'hsl(160, 80%, 60%)', value: 6 },
-];
+import { useMood, moodData } from '@/context/mood-context';
 
 const DIAL_RADIUS = 140;
 const HANDLE_SIZE = 32;
@@ -40,19 +20,19 @@ const MoodDial = () => {
 
   useEffect(() => {
     // Start at Neutral
-    const neutralIndex = moods.findIndex(m => m.name === 'Neutral');
-    const step = (Math.PI * 2) / moods.length;
+    const neutralIndex = moodData.findIndex(m => m.name === 'Neutral');
+    const step = (Math.PI * 2) / moodData.length;
     const initialAngle = -Math.PI / 2 + neutralIndex * step;
     setAngle(initialAngle);
   }, []);
 
   const selectedMood = useMemo(() => {
-    const numMoods = moods.length;
+    const numMoods = moodData.length;
     const step = (2 * Math.PI) / numMoods;
     // Normalize angle to be positive
     let normalizedAngle = (angle + Math.PI / 2 + 2 * Math.PI) % (2 * Math.PI);
     let moodIndex = Math.round(normalizedAngle / step) % numMoods;
-    return moods[moodIndex];
+    return moodData[moodIndex];
   }, [angle]);
 
   const bind = useDrag(({ xy }) => {
@@ -94,8 +74,8 @@ const MoodDial = () => {
       >
         <div className="absolute w-full h-full border-8 border-card rounded-full shadow-inner bg-background/80 backdrop-blur-xl" />
 
-        {moods.map((mood, index) => {
-          const numMoods = moods.length;
+        {moodData.map((mood, index) => {
+          const numMoods = moodData.length;
           const moodAngle = -Math.PI / 2 + (index / numMoods) * (2 * Math.PI);
           const labelX = LABEL_RADIUS * Math.cos(moodAngle);
           const labelY = LABEL_RADIUS * Math.sin(moodAngle);

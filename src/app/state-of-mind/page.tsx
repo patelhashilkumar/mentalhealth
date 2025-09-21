@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { format } from 'date-fns';
+import { format, isSameDay } from 'date-fns';
 import { ArrowLeft, CalendarDays, Lightbulb } from 'lucide-react';
 import Link from 'next/link';
 
@@ -12,6 +12,13 @@ import DailyMood from '@/components/daily-mood';
 import { getAiMoodSummary } from '../actions';
 import type { MoodSummaryOutput } from '@/ai/flows/mood-summary';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { moodData } from '@/context/mood-context';
 
 export default function StateOfMindPage() {
   const { moods } = useMood();
@@ -20,8 +27,6 @@ export default function StateOfMindPage() {
   const [aiResponse, setAiResponse] = useState<MoodSummaryOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Hardcoded profile data for now.
-  // In a real app, this would come from a user context or API.
   const userProfile = {
     name: 'Anvesha',
     age: 21,
@@ -42,12 +47,16 @@ export default function StateOfMindPage() {
         setIsLoading(true);
         setAiResponse(null);
         try {
-          const result = await getAiMoodSummary({ mood: mood.name, profile: userProfile });
+          const result = await getAiMoodSummary({
+            mood: mood.name,
+            profile: userProfile,
+          });
           setAiResponse(result);
         } catch (error) {
           console.error(error);
           setAiResponse({
-            summary: 'Could not load AI summary. Keep logging your mood to get personalized insights.',
+            summary:
+              'Could not load AI summary. Keep logging your mood to get personalized insights.',
             tips: [],
           });
         } finally {
@@ -58,8 +67,32 @@ export default function StateOfMindPage() {
       }
     }
     fetchSummary();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [moods]);
+
+  const moodModifiers = moodData.reduce(
+    (acc: Record<string, Date[]>, moodType) => {
+      acc[moodType.name] = moods
+        .filter(m => m.name === moodType.name)
+        .map(m => m.date);
+      return acc;
+    },
+    {}
+  );
+
+  const moodModifierStyles = moodData.reduce(
+    (acc: Record<string, React.CSSProperties>, moodType) => {
+      acc[moodType.name] = {
+        backgroundColor: `${moodType.color.replace(')', ', 0.3)')}`,
+        color: moodType.color.startsWith('hsl(0')
+          ? 'hsl(var(--destructive-foreground))'
+          : 'hsl(var(--foreground))',
+        borderRadius: '50%',
+      };
+      return acc;
+    },
+    {}
+  );
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -71,9 +104,19 @@ export default function StateOfMindPage() {
           </Link>
         </Button>
         <h1 className="text-lg font-semibold">State of Mind</h1>
-        <Button variant="ghost" size="icon">
-          <CalendarDays className="h-5 w-5" />
-        </Button>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="ghost" size="icon">
+              <CalendarDays className="h-5 w-5" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0">
+            <Calendar
+              modifiers={moodModifiers}
+              modifiersStyles={moodModifierStyles}
+            />
+          </PopoverContent>
+        </Popover>
       </header>
       <main className="flex-1 flex-col items-center p-4">
         <div className="flex items-center justify-between mb-6">
@@ -106,7 +149,9 @@ export default function StateOfMindPage() {
           <div className="space-y-6">
             <Card className="bg-card/80 shadow-sm rounded-2xl">
               <CardHeader>
-                <CardTitle className="text-lg font-semibold text-gray-700">AI Summary</CardTitle>
+                <CardTitle className="text-lg font-semibold text-gray-700">
+                  AI Summary
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <Skeleton className="h-4 w-full" />
@@ -115,7 +160,9 @@ export default function StateOfMindPage() {
             </Card>
             <Card className="bg-card/80 shadow-sm rounded-2xl">
               <CardHeader>
-                <CardTitle className="text-lg font-semibold text-gray-700">Wellness Tips</CardTitle>
+                <CardTitle className="text-lg font-semibold text-gray-700">
+                  Wellness Tips
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-start gap-4">
@@ -141,7 +188,9 @@ export default function StateOfMindPage() {
           <div className="space-y-6">
             <Card className="bg-card/80 shadow-sm rounded-2xl">
               <CardHeader>
-                <CardTitle className="text-lg font-semibold text-gray-700">AI Summary</CardTitle>
+                <CardTitle className="text-lg font-semibold text-gray-700">
+                  AI Summary
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">{aiResponse.summary}</p>
@@ -151,7 +200,9 @@ export default function StateOfMindPage() {
             {aiResponse.tips.length > 0 && (
               <Card className="bg-card/80 shadow-sm rounded-2xl">
                 <CardHeader>
-                  <CardTitle className="text-lg font-semibold text-gray-700">Wellness Tips</CardTitle>
+                  <CardTitle className="text-lg font-semibold text-gray-700">
+                    Wellness Tips
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {aiResponse.tips.map((tip, index) => (
@@ -160,8 +211,12 @@ export default function StateOfMindPage() {
                         <Lightbulb className="h-5 w-5" />
                       </div>
                       <div>
-                        <h4 className="font-semibold text-foreground">{tip.title}</h4>
-                        <p className="text-sm text-muted-foreground">{tip.description}</p>
+                        <h4 className="font-semibold text-foreground">
+                          {tip.title}
+                        </h4>
+                        <p className="text-sm text-muted-foreground">
+                          {tip.description}
+                        </p>
                       </div>
                     </div>
                   ))}

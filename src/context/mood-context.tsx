@@ -9,6 +9,16 @@ import React, {
   useCallback,
 } from 'react';
 
+export const moodData = [
+  { name: 'Very Unpleasant', emoji: '😠', color: 'hsl(0, 84%, 60%)' },
+  { name: 'Unpleasant', emoji: '😟', color: 'hsl(30, 84%, 60%)' },
+  { name: 'Slightly Unpleasant', emoji: '😕', color: 'hsl(60, 84%, 60%)' },
+  { name: 'Neutral', emoji: '😐', color: 'hsl(240, 5%, 65%)' },
+  { name: 'Slightly Pleasant', emoji: '🙂', color: 'hsl(120, 60%, 65%)' },
+  { name: 'Pleasant', emoji: '😊', color: 'hsl(140, 60%, 60%)' },
+  { name: 'Very Pleasant', emoji: '😄', color: 'hsl(160, 80%, 60%)' },
+];
+
 export type Mood = {
   name: string;
   emoji: string;
