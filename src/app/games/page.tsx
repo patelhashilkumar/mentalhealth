@@ -11,101 +11,133 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import AuthGuard from '@/components/auth-guard';
-import { cn } from '@/lib/utils';
+import { useState, useEffect, useMemo } from 'react';
+import { Label } from '@/components/ui/label';
+
 
 const games = [
   {
     title: 'Blocky Blast Puzzle',
-    genre: 'Puzzle solve',
+    genre: 'Puzzle',
     recommendedAge: '10+',
     link: 'https://poki.com/en/g/blocky-blast-puzzle',
     tags: ['Calm', 'Focus'],
     imageHint: 'abstract blocks',
-    imageSeed: 'blocky',
+    playtime: 5,
+    recommended: true,
+    newest: false,
+    mostPlayed: false,
   },
   {
     title: 'Merge & Double',
-    genre: 'Number merge',
+    genre: 'Puzzle',
     recommendedAge: '8+',
     link: 'https://poki.com/en/g/merge-and-double',
     tags: ['Focus', 'Quick'],
     imageHint: 'number puzzle',
-    imageSeed: 'merge',
+    playtime: 3,
+    recommended: false,
+    newest: true,
+    mostPlayed: false,
   },
   {
     title: 'Sweet World',
-    genre: 'Match-3 candy',
+    genre: 'Puzzle',
     recommendedAge: '7+',
     link: 'https://poki.com/en/g/sweet-world',
-    tags: ['Calm', 'Casual'],
+    tags: ['Calm_Casual'],
     imageHint: 'candy world',
-    imageSeed: 'sweet',
+    playtime: 5,
+    recommended: false,
+    newest: false,
+    mostPlayed: true,
   },
   {
     title: 'Chess Multiplayer',
-    genre: 'Strategy board',
+    genre: 'Strategy',
     recommendedAge: '7+',
     link: 'https://poki.com/en/g/chess-multiplayer',
     tags: ['Strategy', 'Focus', 'Social'],
     imageHint: 'chess board',
-    imageSeed: 'chess',
+    playtime: 15,
+    recommended: true,
+    newest: false,
+    mostPlayed: true,
   },
   {
     title: 'Four in a Row',
-    genre: 'Classic connect-4',
+    genre: 'Strategy',
     recommendedAge: '7+',
     link: 'https://poki.com/en/g/four-in-a-row',
     tags: ['Strategy', 'Quick'],
     imageHint: 'classic boardgame',
-    imageSeed: 'connect',
+    playtime: 3,
+    recommended: false,
+    newest: false,
+    mostPlayed: false,
   },
   {
     title: 'SmashKarts',
-    genre: 'Arcade kart shooter',
+    genre: 'Arcade',
     recommendedAge: '13+',
     link: 'https://smashkarts.io/',
     tags: ['Action', 'Competitive'],
     imageHint: 'kart racing',
-    imageSeed: 'smash',
+    playtime: 8,
+    recommended: true,
+    newest: true,
+    mostPlayed: true,
     safetyNote: 'May include intense action.',
   },
   {
     title: 'Mario Kart 8',
-    genre: 'Racing (official site)',
+    genre: 'Racing',
     recommendedAge: '10+',
     link: 'https://mariokart8.nintendo.com/',
     tags: ['Racing', 'Joyful'],
     imageHint: 'cartoon race',
-    imageSeed: 'mariokart',
+    playtime: 5,
+    recommended: true,
+    newest: false,
+    mostPlayed: false,
   },
   {
     title: 'Call of Duty: Warzone',
-    genre: 'Online shooter',
+    genre: 'Shooter',
     recommendedAge: '18+',
     link: 'https://www.callofduty.com/warzone',
     tags: ['Shooter', 'Competitive'],
     imageHint: 'soldier action',
-    imageSeed: 'warzone',
+    playtime: 20,
+    recommended: false,
+    newest: false,
+    mostPlayed: true,
     safetyNote: 'May include intense action.',
   },
   {
     title: 'Snake',
-    genre: 'Classic arcade',
+    genre: 'Arcade',
     recommendedAge: '7+',
     link: 'https://www.google.com/search?q=snake+game',
     tags: ['Quick', 'Nostalgia'],
     imageHint: 'classic snake',
-    imageSeed: 'snakegame',
+    playtime: 2,
+    recommended: false,
+    newest: false,
+    mostPlayed: false,
   },
 ];
 
-const GameCard = ({
-  game,
-}: {
-  game: (typeof games)[0];
-}) => (
+const GameCard = ({ game }: { game: (typeof games)[0] }) => (
   <Card className="group flex flex-col overflow-hidden bg-card transition-all duration-300 ease-in-out hover:shadow-2xl hover:-translate-y-1">
     <div className="relative h-40 w-full">
       <Image
@@ -128,18 +160,16 @@ const GameCard = ({
       </CardDescription>
     </CardHeader>
     <CardContent className="p-4 pt-0 flex-1 flex flex-col justify-end">
-      <div className="flex flex-wrap gap-2 mb-4 h-5 items-center">
-        <div className="flex flex-wrap gap-2">
-          {game.tags.map(tag => (
-            <Badge key={tag} variant="secondary" className="text-xs">
-              {tag}
-            </Badge>
-          ))}
-        </div>
+      <div className="flex flex-wrap gap-2 mb-4">
+        {game.tags.map(tag => (
+          <Badge key={tag} variant="secondary" className="text-xs">
+            {tag}
+          </Badge>
+        ))}
       </div>
-       {game.safetyNote && (
-          <p className="text-xs text-destructive/80 mb-2">{game.safetyNote}</p>
-        )}
+      {game.safetyNote && (
+        <p className="text-xs text-destructive/80 mb-2">{game.safetyNote}</p>
+      )}
     </CardContent>
     <div className="border-t p-4 flex items-center justify-between">
       <Button asChild className="w-full">
@@ -160,7 +190,51 @@ const GameCard = ({
   </Card>
 );
 
+const allGenres = ['All', ...Array.from(new Set(games.map(g => g.genre)))];
+const allTags = ['All', 'Calm', 'Focus', 'Quick', 'Strategy', 'Competitive', 'Action', 'Social', 'Joyful', 'Nostalgia', 'Calm_Casual', 'Shooter', 'Racing', 'Arcade', 'Puzzle'];
+const playtimeOptions = [
+    { value: 'all', label: 'All' },
+    { value: '2', label: '≤ 2 min' },
+    { value: '5', label: '≤ 5 min' },
+    { value: '10', label: '≤ 10 min' },
+    { value: '10+', label: '> 10 min' },
+];
+
 function GamesPageContent() {
+    const [genre, setGenre] = useState('All');
+    const [tag, setTag] = useState('All');
+    const [playtime, setPlaytime] = useState('all');
+    const [sort, setSort] = useState('recommended');
+
+
+  const filteredGames = useMemo(() => {
+    let filtered = games;
+
+    if (genre !== 'All') {
+      filtered = filtered.filter(game => game.genre === genre);
+    }
+    if (tag !== 'All') {
+      filtered = filtered.filter(game => game.tags.includes(tag));
+    }
+    if (playtime !== 'all') {
+        if (playtime === '10+') {
+            filtered = filtered.filter(game => game.playtime > 10);
+        } else {
+            filtered = filtered.filter(game => game.playtime <= parseInt(playtime, 10));
+        }
+    }
+
+    switch (sort) {
+      case 'mostPlayed':
+        return filtered.sort((a, b) => (b.mostPlayed ? 1 : -1));
+      case 'newest':
+        return filtered.sort((a, b) => (b.newest ? 1 : -1));
+      case 'recommended':
+      default:
+        return filtered.sort((a, b) => (b.recommended ? 1 : -1));
+    }
+  }, [genre, tag, playtime, sort]);
+
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-blue-50/50 via-white to-cyan-50/50 text-gray-800">
       <header className="flex items-center justify-between p-4 border-b bg-transparent">
@@ -176,13 +250,70 @@ function GamesPageContent() {
           </h1>
         </div>
       </header>
-      <main className="flex-1 p-6 md:p-8">
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
-          {games.map(game => (
-            <GameCard key={game.title} game={game} />
-          ))}
+
+      <div className="p-6 md:p-8 space-y-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 items-end">
+            <div>
+                <Label htmlFor="genre-filter">Genre</Label>
+                <Select value={genre} onValueChange={setGenre}>
+                    <SelectTrigger id="genre-filter">
+                        <SelectValue placeholder="Genre" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {allGenres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}
+                    </SelectContent>
+                </Select>
+            </div>
+            <div>
+                <Label htmlFor="tag-filter">Tag</Label>
+                <Select value={tag} onValueChange={setTag}>
+                    <SelectTrigger id="tag-filter">
+                        <SelectValue placeholder="Tag" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {allTags.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                    </SelectContent>
+                </Select>
+            </div>
+            <div>
+                <Label htmlFor="playtime-filter">Playtime</Label>
+                <Select value={playtime} onValueChange={setPlaytime}>
+                    <SelectTrigger id="playtime-filter">
+                        <SelectValue placeholder="Playtime" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {playtimeOptions.map(p => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
+                    </SelectContent>
+                </Select>
+            </div>
+            <div>
+                <Label htmlFor="sort-by">Sort By</Label>
+                <Select value={sort} onValueChange={setSort}>
+                    <SelectTrigger id="sort-by">
+                        <SelectValue placeholder="Sort" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="recommended">Recommended</SelectItem>
+                        <SelectItem value="mostPlayed">Most Played</SelectItem>
+                        <SelectItem value="newest">Newest</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
         </div>
-      </main>
+
+        <main className="flex-1">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {filteredGames.map(game => (
+              <GameCard key={game.title} game={game} />
+            ))}
+             {filteredGames.length === 0 && (
+                <div className="col-span-full text-center py-16">
+                    <p className="text-lg text-muted-foreground">No games match your filters.</p>
+                </div>
+            )}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
@@ -194,3 +325,5 @@ export default function GamesPage() {
     </AuthGuard>
   );
 }
+
+    
